@@ -1,6 +1,8 @@
 const pokemonContainer = document.getElementById('pokemon-container');
 const searchInput = document.getElementById('search');
 const filterSelect = document.getElementById('filter');
+const sortNameSelect = document.getElementById('sortName');
+const sortNumberSelect = document.getElementById('sortNumber');
 const prevButton = document.getElementById('prev');
 const nextButton = document.getElementById('next');
 
@@ -15,7 +17,6 @@ async function getData() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log('Fetched data:', data.slice(0, 5)); // Log first 5 items for verification
         pokemonData = data;
         displayPokemon();
     } catch (error) {
@@ -25,6 +26,8 @@ async function getData() {
 
 searchInput.addEventListener('input', displayPokemon);
 filterSelect.addEventListener('change', displayPokemon);
+sortNameSelect.addEventListener('change', displayPokemon);
+sortNumberSelect.addEventListener('change', displayPokemon);
 prevButton.addEventListener('click', () => {
     if (currentPage > 1) {
         currentPage--;
@@ -48,11 +51,41 @@ function filteredPokemon() {
     });
 }
 
+function sortPokemon(pokemonList) {
+    const sortName = sortNameSelect.value;
+    const sortNumber = sortNumberSelect.value;
+
+    if (sortName === 'nameAsc') {
+        pokemonList.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortName === 'nameDesc') {
+        pokemonList.sort((a, b) => b.name.localeCompare(a.name));
+    }
+
+    if (sortNumber === 'numberAsc') {
+        pokemonList.sort((a, b) => parseInt(a.number) - parseInt(b.number));
+    } else if (sortNumber === 'numberDesc') {
+        pokemonList.sort((a, b) => parseInt(b.number) - parseInt(a.number));
+    }
+
+    return pokemonList;
+}
+
 function displayPokemon() {
-    pokemonContainer.innerHTML = '';
+    pokemonContainer.innerHTML = ''; // Clear the container before appending new cards
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    const pokemonToDisplay = filteredPokemon().slice(start, end);
+    let pokemonToDisplay = filteredPokemon();
+    pokemonToDisplay = sortPokemon(pokemonToDisplay).slice(start, end);
+
+    const displayedNumbers = new Set();
+    pokemonToDisplay = pokemonToDisplay.filter(pokemon => {
+        if (displayedNumbers.has(pokemon.number)) {
+            return false;
+        } else {
+            displayedNumbers.add(pokemon.number);
+            return true;
+        }
+    });
 
     pokemonToDisplay.forEach(pokemon => {
         const card = document.createElement('div');
