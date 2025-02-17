@@ -5,6 +5,9 @@ const sortNameSelect = document.getElementById('sortName');
 const sortNumberSelect = document.getElementById('sortNumber');
 const prevButton = document.getElementById('prev');
 const nextButton = document.getElementById('next');
+const hamburgerMenu = document.getElementById('hamburger-menu');
+const menuContainer = document.getElementById('menu-container');
+const closeMenuButton = document.getElementById('close-menu');
 
 let currentPage = 1;
 const itemsPerPage = 15;
@@ -39,6 +42,14 @@ nextButton.addEventListener('click', () => {
         currentPage++;
         displayPokemon();
     }
+});
+
+hamburgerMenu.addEventListener('click', () => {
+    menuContainer.classList.toggle('show');
+});
+
+closeMenuButton.addEventListener('click', () => {
+    menuContainer.classList.remove('show');
 });
 
 function filteredPokemon() {

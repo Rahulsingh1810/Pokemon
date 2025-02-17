@@ -9,26 +9,35 @@
 <body>
     <header>
         <h1>Pokémon Cards</h1>
-        <input type="text" id="search" placeholder="Search by name or number">
-        <select id="filter">
-            <option value="">Filter by type</option>
-            <option value="grass">Grass</option>
-            <option value="poison">Poison</option>
-            <option value="fire">Fire</option>
-            <option value="psychic">Psychic</option>
-            <option value="flying">Flying</option>
-            <option value="ice">Ice</option>
-        </select>
-        <select id="sortName">
-            <option value="">Sort by name</option>
-            <option value="nameAsc">Name (A-Z)</option>
-            <option value="nameDesc">Name (Z-A)</option>
-        </select>
-        <select id="sortNumber">
-            <option value="">Sort by number</option>
-            <option value="numberAsc">Number (Ascending)</option>
-            <option value="numberDesc">Number (Descending)</option>
-        </select>
+        <div class="hamburger-menu" id="hamburger-menu">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <div class="menu-container" id="menu-container">
+            <button class="close-menu" id="close-menu">&times;</button>
+            <input type="text" id="search" placeholder="Search by name or number">
+            <select id="filter">
+                <option value="">Filter by type</option>
+                <option value="grass">Grass</option>
+                <option value="poison">Poison</option>
+                <option value="fire">Fire</option>
+                <option value="psychic">Psychic</option>
+                <option value="flying">Flying</option>
+                <option value="ice">Ice</option>
+            </select>
+            <select id="sortName">
+                <option value="">Sort by name</option>
+                <option value="nameAsc">Name (A-Z)</option>
+                <option value="nameDesc">Name (Z-A)</option>
+            </select>
+            <select id="sortNumber">
+                <option value="">Sort by number</option>
+                <option value="numberAsc">Number (Ascending)</option>
+                <option value="numberDesc">Number (Descending)</option>
+            </select>
+        </div>
+        <img src="assets/pokemon_logo.png" alt="Pokémon Logo" class="logo">
     </header>
     <main id="pokemon-container"></main>
     <footer>

@@ -1,5 +1,6 @@
 body {
-    background-color: black;
+    background: url('./bgimage.jpg') no-repeat center center fixed;
+    background-size: cover;
     color: white;
     font-family: Arial, sans-serif;
     margin: 0;
@@ -7,16 +8,72 @@ body {
     text-align: center;
 }
 
+.logo {
+    width: 150px; /* Reduced size */
+    margin: 5px;
+    padding-right: 10px;
+}
+
+.logo_ball {
+    width: 75px; /* Reduced size */
+    margin: 5px;
+    padding-right: 10px;
+}
+
 header {
-    padding: 20px;
-    background-color: red;
+    position: sticky;
+    top: 0;
+    padding: 8px; /* Reduced padding */
+    background: rgba(229, 231, 235, 0.1); /* zinc-200 with transparency */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+header h1 {
+    font-size: 1.5em; /* Reduced font size */
+    margin: 0;
+    color: black;
 }
 
 header input, header select {
-    padding: 10px;
-    margin: 10px;
+    padding: 5px;
+    margin: 5px;
     border: none;
     border-radius: 5px;
+}
+
+.hamburger-menu {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.hamburger-menu .bar {
+    width: 25px;
+    height: 3px;
+    background-color: black;
+    margin: 4px 0;
+}
+
+.menu-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.close-menu {
+    background: none;
+    border: none;
+    font-size: 2em;
+    color: black;
+    cursor: pointer;
+    align-self: flex-end;
+    margin: 10px;
 }
 
 #pokemon-container {
@@ -27,13 +84,14 @@ header input, header select {
 }
 
 .pokemon-card {
-    background-color: #333;
+    background-color: rgba(255, 255, 255, 0.8); /* Transparent white background */
     border: 1px solid #444;
     border-radius: 10px;
     margin: 10px;
     padding: 20px;
     width: 200px;
     text-align: center;
+    color: black;
 }
 
 .pokemon-card img {
@@ -58,4 +116,73 @@ footer button {
 
 footer button:hover {
     background-color: #555;
+}
+
+/* Media queries for mobile devices */
+@media (max-width: 768px) {
+    body {
+        background-size: cover;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    header h1 {
+        font-size: 1.2em; /* Further reduced font size for mobile */
+    }
+
+    header input, header select {
+        width: 90%;
+        margin: 5px 0;
+    }
+
+    .logo {
+        width: 100px; /* Further reduced size for mobile */
+    }
+
+    .logo_ball {
+        width: 50px; /* Further reduced size for mobile */
+    }
+
+    .pokemon-card {
+        width: 90%; /* Adjust card width for mobile */
+    }
+
+    .hamburger-menu {
+        display: flex;
+    }
+
+    .menu-container {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        background: rgba(229, 231, 235, 0.9); /* zinc-200 with more transparency */
+        position: absolute;
+        top: 50px;
+        left: 0;
+        z-index: 999;
+    }
+
+    .menu-container.show {
+        display: flex;
+    }
+}
+
+@media (min-width: 769px) {
+    .hamburger-menu {
+        display: none;
+    }
+
+    .menu-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .close-menu {
+        display: none;
+    }
 }

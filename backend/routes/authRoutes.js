@@ -1,4 +1,4 @@
-// filepath: /Users/avaamo/Documents/GitHub/Pokemon/backend/routes/authRoutes.js
+
 const express = require('express');
 const User = require('../models/userModel');
 const router = express.Router();
