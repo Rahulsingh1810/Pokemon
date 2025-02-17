@@ -12,7 +12,7 @@ let pokemonData = [];
 
 async function getData() {
     try {
-        const response = await fetch('http://localhost:3001/pokemon-data');
+        const response = await fetch('http://localhost:8080/pokemon-data');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
