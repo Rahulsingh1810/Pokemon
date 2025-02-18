@@ -101,7 +101,9 @@ header input, header select, header button {
 
 footer {
     padding: 20px;
-    background-color: red;
+    background: rgba(229, 231, 235, 0.1); 
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 footer button {
@@ -201,7 +203,7 @@ footer button:hover {
 }
 
 .modal-content {
-    background-color: #fefefe;
+    background-color: white;
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;

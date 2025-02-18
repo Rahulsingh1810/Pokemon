@@ -62,10 +62,12 @@ function filteredPokemon() {
     const searchTerm = searchInput.value.toLowerCase();
     const filterType = filterSelect.value;
     const filterWeakness = weaknessFilterSelect.value;
+    
     return pokemonData.filter(pokemon => {
         const matchesSearch = pokemon.name.toLowerCase().includes(searchTerm) || pokemon.number.includes(searchTerm);
         const matchesFilter = filterType ? pokemon.type.includes(filterType) : true;
-        const matchesWeakness = filterWeakness ? pokemon.weakness.includes(filterWeakness) : true;
+        const matchesWeakness = filterWeakness ? 
+            (pokemon.weakness && pokemon.weakness.some(w => w.toLowerCase() === filterWeakness.toLowerCase())) : true;
         return matchesSearch && matchesFilter && matchesWeakness;
     });
 }
