@@ -1,8 +1,11 @@
 const pokemonContainer = document.getElementById('pokemon-container');
 const searchInput = document.getElementById('search');
 const filterSelect = document.getElementById('filter');
+const weaknessFilterSelect = document.getElementById('weaknessFilter');
 const sortNameSelect = document.getElementById('sortName');
 const sortNumberSelect = document.getElementById('sortNumber');
+const randomizeButton = document.getElementById('randomize');
+const clearFilterButton = document.getElementById('clearFilter');
 const prevButton = document.getElementById('prev');
 const nextButton = document.getElementById('next');
 const hamburgerMenu = document.getElementById('hamburger-menu');
@@ -29,8 +32,11 @@ async function getData() {
 
 searchInput.addEventListener('input', displayPokemon);
 filterSelect.addEventListener('change', displayPokemon);
+weaknessFilterSelect.addEventListener('change', displayPokemon);
 sortNameSelect.addEventListener('change', displayPokemon);
 sortNumberSelect.addEventListener('change', displayPokemon);
+randomizeButton.addEventListener('click', randomizePokemon);
+clearFilterButton.addEventListener('click', clearFilters);
 prevButton.addEventListener('click', () => {
     if (currentPage > 1) {
         currentPage--;
@@ -55,10 +61,12 @@ closeMenuButton.addEventListener('click', () => {
 function filteredPokemon() {
     const searchTerm = searchInput.value.toLowerCase();
     const filterType = filterSelect.value;
+    const filterWeakness = weaknessFilterSelect.value;
     return pokemonData.filter(pokemon => {
         const matchesSearch = pokemon.name.toLowerCase().includes(searchTerm) || pokemon.number.includes(searchTerm);
         const matchesFilter = filterType ? pokemon.type.includes(filterType) : true;
-        return matchesSearch && matchesFilter;
+        const matchesWeakness = filterWeakness ? pokemon.weakness.includes(filterWeakness) : true;
+        return matchesSearch && matchesFilter && matchesWeakness;
     });
 }
 
@@ -109,6 +117,20 @@ function displayPokemon() {
         `;
         pokemonContainer.appendChild(card);
     });
+}
+
+function clearFilters() {
+    searchInput.value = '';
+    filterSelect.value = '';
+    weaknessFilterSelect.value = '';
+    sortNameSelect.value = '';
+    sortNumberSelect.value = '';
+    displayPokemon();
+}
+
+function randomizePokemon() {
+    pokemonData.sort(() => Math.random() - 0.5);
+    displayPokemon();
 }
 
 getData();

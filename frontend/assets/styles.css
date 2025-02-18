@@ -40,7 +40,7 @@ header h1 {
     color: black;
 }
 
-header input, header select {
+header input, header select, header button {
     padding: 5px;
     margin: 5px;
     border: none;
@@ -133,7 +133,7 @@ footer button:hover {
         font-size: 1.2em; /* Further reduced font size for mobile */
     }
 
-    header input, header select {
+    header input, header select, header button {
         width: 90%;
         margin: 5px 0;
     }
