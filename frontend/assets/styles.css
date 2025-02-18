@@ -186,3 +186,79 @@ footer button:hover {
         display: none;
     }
 }
+
+/* Add these styles for the modal */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%;
+    animation: scaleUp 0.3s ease-out;
+    color: black;
+}
+
+@keyframes scaleUp {
+    from {transform: scale(0.7);}
+    to {transform: scale(1);}
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Add these styles for type-based card colors */
+.grass { background-color: #78C850; }
+.poison { background-color: #A040A0; }
+.bug { background-color: #A8B820; }
+.dark { background-color: #705848; }
+.dragon { background-color: #7038F8; }
+.electric { background-color: #F8D030; }
+.fairy { background-color: #EE99AC; }
+.fighting { background-color: #C03028; }
+.fire { background-color: #F08030; }
+.flying { background-color: #A890F0; }
+.ghost { background-color: #705898; }
+.ground { background-color: #E0C068; }
+.ice { background-color: #98D8D8; }
+.normal { background-color: #A8A878; }
+.psychic { background-color: #F85888; }
+.rock { background-color: #B8A038; }
+.steel { background-color: #B8B8D0; }
+.water { background-color: #6890F0; }
+
+/* Add these styles for type boxes */
+.type-box {
+    display: inline-block;
+    padding: 5px;
+    border-radius: 5px;
+    color: white;
+    margin: 2px;
+    font-size: 0.8em;
+}
+
+.grass .type-box { background-color: #78C850; }
+.poison .type-box { background-color: #A040A0; }
+/* Add similar styles for other types */

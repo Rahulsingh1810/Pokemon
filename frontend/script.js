@@ -108,13 +108,17 @@ function displayPokemon() {
 
     pokemonToDisplay.forEach(pokemon => {
         const card = document.createElement('div');
-        card.className = 'pokemon-card';
+        card.className = `pokemon-card ${pokemon.type[0]}`; // Use the first type for the card color
         card.innerHTML = `
             <img src="${pokemon.ThumbnailImage}" alt="${pokemon.ThumbnailAltText}">
             <h3>${pokemon.name}</h3>
             <p>#${pokemon.number}</p>
             <p>Type: ${pokemon.type.join(', ')}</p>
         `;
+        card.addEventListener('click', () => {
+            console.log(`Card clicked: ${pokemon.name}`); // Debugging log
+            openModal(pokemon);
+        }); // Add click event to open modal
         pokemonContainer.appendChild(card);
     });
 }
@@ -133,4 +137,43 @@ function randomizePokemon() {
     displayPokemon();
 }
 
-getData();
+// Function to open modal
+function openModal(pokemon) {
+    console.log(`Opening modal for: ${pokemon.name}`); // Debugging log
+    const modal = document.getElementById('pokemon-modal');
+    const pokemonDetails = document.getElementById('pokemon-details');
+    // Display Pokémon details in the modal
+    pokemonDetails.innerHTML = `
+        <h2>${pokemon.name}</h2>
+        <img src="${pokemon.ThumbnailImage}" alt="${pokemon.ThumbnailAltText}">
+        <p>Number: #${pokemon.number}</p>
+        <p>Type: ${pokemon.type.join(', ')}</p>
+        <p>Height: ${pokemon.height}</p>
+        <p>Weight: ${pokemon.weight}</p>
+        <p>Abilities: ${pokemon.abilities.join(', ')}</p>
+        <p>Weaknesses: ${pokemon.weakness.join(', ')}</p>
+    `;
+    modal.style.display = 'block';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const closeButton = document.querySelector('.close-button');
+
+    // Close modal when the close button is clicked
+    closeButton.onclick = function() {
+        console.log('Closing modal'); // Debugging log
+        const modal = document.getElementById('pokemon-modal');
+        modal.style.display = 'none';
+    }
+
+    // Close modal when clicking outside of the modal content
+    window.onclick = function(event) {
+        const modal = document.getElementById('pokemon-modal');
+        if (event.target == modal) {
+            console.log('Closing modal from outside click'); // Debugging log
+            modal.style.display = 'none';
+        }
+    }
+
+    getData();
+});
