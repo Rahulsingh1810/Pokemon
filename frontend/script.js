@@ -138,13 +138,10 @@ function randomizePokemon() {
     // Get filtered pokemon if any filters are applied
     const filtered = filteredPokemon();
     const hasFilters = searchInput.value || filterSelect.value || weaknessFilterSelect.value;
-    
-   
 
     if (hasFilters) {
-        console.log('Shuffling filtered Pokemon only');
         // Create a copy of filtered array to shuffle
-       
+        const shuffledFiltered = [...filtered].sort(() => Math.random() - 0.5);
         
         // Create a new array with shuffled filtered Pokemon
         const newPokemonData = [...pokemonData];
@@ -160,10 +157,8 @@ function randomizePokemon() {
             }
         });
         
-       
         pokemonData = newPokemonData;
     } else {
-        
         pokemonData.sort(() => Math.random() - 0.5);
     }
     
