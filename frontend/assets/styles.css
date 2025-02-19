@@ -1,11 +1,20 @@
 body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
     background: url('./bgimage.jpg') no-repeat center center fixed;
     background-size: cover;
     color: white;
     font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
     text-align: center;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
 }
 
 .logo {
@@ -80,18 +89,20 @@ header input, header select, header button {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: flex-start; /* Prevents stretching */
     padding: 20px;
+    gap: 20px; /* Consistent spacing between cards */
 }
 
 .pokemon-card {
-    background-color: rgba(255, 255, 255, 0.8); /* Transparent white background */
+    background-color: rgba(255, 255, 255, 0.8);
     border: 1px solid #444;
     border-radius: 10px;
-    margin: 10px;
     padding: 20px;
     width: 200px;
     text-align: center;
     color: black;
+    flex: 0 0 auto; /* Prevents stretching */
 }
 
 .pokemon-card img {
@@ -100,13 +111,13 @@ header input, header select, header button {
 }
 
 footer {
+    margin-top: auto;
     padding: 20px;
-    background: rgba(229, 231, 235, 0.1); 
+    background: rgba(229, 231, 235, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    position: sticky;
-    z-index: 1000;
-    bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 footer button {
@@ -267,3 +278,68 @@ footer button:hover {
 .grass .type-box { background-color: #78C850; }
 .poison .type-box { background-color: #A040A0; }
 /* Add similar styles for other types */
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+}
+
+.pagination button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.pagination button:disabled {
+    background-color: rgba(200, 200, 200, 0.5);
+    cursor: not-allowed;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.pagination span {
+    color: white;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .pagination {
+        flex-wrap: wrap;
+    }
+    
+    .pagination button {
+        font-size: 14px;
+        padding: 4px 8px;
+    }
+}
+
+.logout-btn {
+    background: #ff5350;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-left: auto;
+    font-weight: bold;
+}
+
+.logout-btn:hover {
+    background: #e63e3b;
+}
+
+@media (max-width: 768px) {
+    .logout-btn {
+        padding: 6px 12px;
+        font-size: 0.9em;
+    }
+}

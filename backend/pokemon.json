@@ -25971,35 +25971,5 @@
       "poison",
       "ghost"
     ]
-  },
-  {
-    "name": "Bulbasaur",
-    "number": "001",
-    "type": [
-      "Grass",
-      "Poison"
-    ],
-    "ThumbnailImage": "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/001.png",
-    "ThumbnailAltText": "Bulbasaur"
-  },
-  {
-    "name": "Ivysaur",
-    "number": "002",
-    "type": [
-      "Grass",
-      "Poison"
-    ],
-    "ThumbnailImage": "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/002.png",
-    "ThumbnailAltText": "Ivysaur"
-  },
-  {
-    "name": "Venusaur",
-    "number": "003",
-    "type": [
-      "Grass",
-      "Poison"
-    ],
-    "ThumbnailImage": "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/003.png",
-    "ThumbnailAltText": "Venusaur"
   }
 ]

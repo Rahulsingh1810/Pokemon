@@ -5,6 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokémon Cards</title>
     <link rel="stylesheet" href="assets/styles.css">
+    <script>
+        // Check authentication before page loads
+        (function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            
+            if (!token || !user) {
+                window.location.href = 'login.html';
+            }
+            
+            // Optional: Check token expiration
+            try {
+                const userData = JSON.parse(user);
+                if (!userData._id || !userData.email) {
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                }
+            } catch (error) {
+                localStorage.clear();
+                window.location.href = 'login.html';
+            }
+        })();
+    </script>
 </head>
 <body>
     <header>
@@ -79,7 +102,7 @@
             <button id="randomize">Randomize</button>
             <button id="clearFilter">Clear</button>
         </div>
-        
+        <button id="logoutBtn" class="logout-btn">Logout</button>
     </header>
     <main id="pokemon-container"></main>
     

@@ -11,10 +11,12 @@ const nextButton = document.getElementById('next');
 const hamburgerMenu = document.getElementById('hamburger-menu');
 const menuContainer = document.getElementById('menu-container');
 const closeMenuButton = document.getElementById('close-menu');
+const logoutBtn = document.getElementById('logoutBtn');
 
 let currentPage = 1;
 const itemsPerPage = 15;
 let pokemonData = [];
+let wasRandomized = false;
 
 async function getData() {
     try {
@@ -58,6 +60,15 @@ closeMenuButton.addEventListener('click', () => {
     menuContainer.classList.remove('show');
 });
 
+logoutBtn.addEventListener('click', () => {
+    // Clear all authentication data
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // Redirect to login page
+    window.location.href = 'login.html';
+});
+
 function filteredPokemon() {
     const searchTerm = searchInput.value.toLowerCase();
     const filterType = filterSelect.value;
@@ -91,50 +102,107 @@ function sortPokemon(pokemonList) {
     return pokemonList;
 }
 
+function updatePagination() {
+    const totalPokemon = filteredPokemon().length;
+    const totalPages = Math.ceil(totalPokemon / itemsPerPage);
+    const footer = document.querySelector('footer');
+    
+    footer.innerHTML = `
+        <div class="pagination">
+            <button id="firstPage" ${currentPage === 1 ? 'disabled' : ''}>First</button>
+            <button id="prevPage" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
+            <span>Page ${currentPage} of ${totalPages}</span>
+            <button id="nextPage" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
+            <button id="lastPage" ${currentPage === totalPages ? 'disabled' : ''}>Last</button>
+        </div>
+    `;
+
+    // Add event listeners for pagination buttons
+    document.getElementById('firstPage').addEventListener('click', () => goToPage(1));
+    document.getElementById('prevPage').addEventListener('click', () => goToPage(currentPage - 1));
+    document.getElementById('nextPage').addEventListener('click', () => goToPage(currentPage + 1));
+    document.getElementById('lastPage').addEventListener('click', () => goToPage(totalPages));
+}
+
+function goToPage(page) {
+    const totalPages = Math.ceil(filteredPokemon().length / itemsPerPage);
+    if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        displayPokemon();
+    }
+}
+
 function displayPokemon() {
-    pokemonContainer.innerHTML = ''; // Clear the container before appending new cards
+    pokemonContainer.innerHTML = '';
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
+    
+    // Remove duplicates first
+    const uniquePokemon = [];
+    const seenNumbers = new Set();
+    pokemonData.forEach(pokemon => {
+        if (!seenNumbers.has(pokemon.number)) {
+            seenNumbers.add(pokemon.number);
+            uniquePokemon.push(pokemon);
+        }
+    });
+    
+    // Update pokemonData with unique Pokemon
+    pokemonData = uniquePokemon;
+    
+    // Now proceed with filtering and sorting
     let pokemonToDisplay = filteredPokemon();
     pokemonToDisplay = sortPokemon(pokemonToDisplay).slice(start, end);
 
-    const displayedNumbers = new Set();
-    pokemonToDisplay = pokemonToDisplay.filter(pokemon => {
-        if (displayedNumbers.has(pokemon.number)) {
-            return false;
-        } else {
-            displayedNumbers.add(pokemon.number);
-            return true;
-        }
-    });
-
     pokemonToDisplay.forEach(pokemon => {
         const card = document.createElement('div');
-        card.className = `pokemon-card ${pokemon.type[0]}`; // Use the first type for the card color
+        card.className = `pokemon-card ${pokemon.type[0]}`;
         card.innerHTML = `
             <img src="${pokemon.ThumbnailImage}" alt="${pokemon.ThumbnailAltText}">
             <h3>${pokemon.name}</h3>
             <p>#${pokemon.number}</p>
             <p>Type: ${pokemon.type.join(', ')}</p>
         `;
-        card.addEventListener('click', () => {
-            console.log(`Card clicked: ${pokemon.name}`); // Debugging log
-            openModal(pokemon);
-        }); // Add click event to open modal
+        card.addEventListener('click', () => openModal(pokemon));
         pokemonContainer.appendChild(card);
     });
+
+    updatePagination();
 }
 
 function clearFilters() {
+    // Clear all input fields and selections
     searchInput.value = '';
     filterSelect.value = '';
     weaknessFilterSelect.value = '';
     sortNameSelect.value = '';
     sortNumberSelect.value = '';
+    
+    // Reset page to 1
+    currentPage = 1;
+    
+    // Reset randomization flag
+    wasRandomized = false;
+    
+    // Remove duplicates and sort by number
+    const uniquePokemon = [];
+    const seenNumbers = new Set();
+    
+    [...pokemonData]
+        .sort((a, b) => parseInt(a.number) - parseInt(b.number))
+        .forEach(pokemon => {
+            if (!seenNumbers.has(pokemon.number)) {
+                seenNumbers.add(pokemon.number);
+                uniquePokemon.push(pokemon);
+            }
+        });
+    
+    pokemonData = uniquePokemon;
     displayPokemon();
 }
 
 function randomizePokemon() {
+    wasRandomized = true;
     // Get filtered pokemon if any filters are applied
     const filtered = filteredPokemon();
     const hasFilters = searchInput.value || filterSelect.value || weaknessFilterSelect.value;
