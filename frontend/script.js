@@ -2,8 +2,7 @@ const pokemonContainer = document.getElementById('pokemon-container');
 const searchInput = document.getElementById('search');
 const filterSelect = document.getElementById('filter');
 const weaknessFilterSelect = document.getElementById('weaknessFilter');
-const sortNameSelect = document.getElementById('sortName');
-const sortNumberSelect = document.getElementById('sortNumber');
+const sortSelect = document.getElementById('sortSelect');
 const randomizeButton = document.getElementById('randomize');
 const clearFilterButton = document.getElementById('clearFilter');
 const prevButton = document.getElementById('prev');
@@ -35,8 +34,28 @@ async function getData() {
 searchInput.addEventListener('input', displayPokemon);
 filterSelect.addEventListener('change', displayPokemon);
 weaknessFilterSelect.addEventListener('change', displayPokemon);
-sortNameSelect.addEventListener('change', displayPokemon);
-sortNumberSelect.addEventListener('change', displayPokemon);
+sortSelect.addEventListener('change', () => {
+    const sortValue = sortSelect.value;
+    
+    if (sortValue.startsWith('name')) {
+        const isAsc = sortValue === 'nameAsc';
+        pokemonData.sort((a, b) => {
+            return isAsc ? 
+                a.name.localeCompare(b.name) : 
+                b.name.localeCompare(a.name);
+        });
+    } else if (sortValue.startsWith('number')) {
+        const isAsc = sortValue === 'numberAsc';
+        pokemonData.sort((a, b) => {
+            return isAsc ? 
+                parseInt(a.number) - parseInt(b.number) : 
+                parseInt(b.number) - parseInt(a.number);
+        });
+    }
+    
+    currentPage = 1; // Reset to first page
+    displayPokemon();
+});
 randomizeButton.addEventListener('click', randomizePokemon);
 clearFilterButton.addEventListener('click', clearFilters);
 prevButton.addEventListener('click', () => {
@@ -81,25 +100,6 @@ function filteredPokemon() {
             (pokemon.weakness && pokemon.weakness.some(w => w.toLowerCase() === filterWeakness.toLowerCase())) : true;
         return matchesSearch && matchesFilter && matchesWeakness;
     });
-}
-
-function sortPokemon(pokemonList) {
-    const sortName = sortNameSelect.value;
-    const sortNumber = sortNumberSelect.value;
-
-    if (sortName === 'nameAsc') {
-        pokemonList.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sortName === 'nameDesc') {
-        pokemonList.sort((a, b) => b.name.localeCompare(a.name));
-    }
-
-    if (sortNumber === 'numberAsc') {
-        pokemonList.sort((a, b) => parseInt(a.number) - parseInt(b.number));
-    } else if (sortNumber === 'numberDesc') {
-        pokemonList.sort((a, b) => parseInt(b.number) - parseInt(a.number));
-    }
-
-    return pokemonList;
 }
 
 function updatePagination() {
@@ -152,7 +152,7 @@ function displayPokemon() {
     
     // Now proceed with filtering and sorting
     let pokemonToDisplay = filteredPokemon();
-    pokemonToDisplay = sortPokemon(pokemonToDisplay).slice(start, end);
+    pokemonToDisplay = pokemonData.slice(start, end);
 
     pokemonToDisplay.forEach(pokemon => {
         const card = document.createElement('div');
@@ -171,17 +171,11 @@ function displayPokemon() {
 }
 
 function clearFilters() {
-    // Clear all input fields and selections
     searchInput.value = '';
     filterSelect.value = '';
     weaknessFilterSelect.value = '';
-    sortNameSelect.value = '';
-    sortNumberSelect.value = '';
-    
-    // Reset page to 1
+    sortSelect.value = '';
     currentPage = 1;
-    
-    // Reset randomization flag
     wasRandomized = false;
     
     // Remove duplicates and sort by number

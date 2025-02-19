@@ -95,7 +95,9 @@ header input, header select, header button {
 }
 
 .pokemon-card {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: 	#FFD700;
+    backdrop-filter: blur(10px);
+   
     border: 1px solid #444;
     border-radius: 10px;
     padding: 20px;
@@ -125,8 +127,8 @@ footer button {
     margin: 10px;
     border: none;
     border-radius: 5px;
-    background-color: #444;
-    color: white;
+    background-color: red;
+    color: black;
     cursor: pointer;
 }
 
@@ -217,17 +219,20 @@ footer button:hover {
 }
 
 .modal-content {
-    background-color: white;
+    background-color: 	#FFD700;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 60%;
     animation: scaleUp 0.3s ease-out;
     color: black;
+   
 }
 
 @keyframes scaleUp {
-    from {transform: scale(0.7);}
+    from {transform: scale(0);}
     to {transform: scale(1);}
 }
 
@@ -243,13 +248,14 @@ footer button:hover {
     color: black;
     text-decoration: none;
     cursor: pointer;
+    
 }
 
 /* Add these styles for type-based card colors */
-.grass { background-color: #78C850; }
+/* .grass { background-color: #78C850; }
 .poison { background-color: #A040A0; }
 .bug { background-color: #A8B820; }
-.dark { background-color: #705848; }
+.dark { background-color: #A27B5C; }
 .dragon { background-color: #7038F8; }
 .electric { background-color: #F8D030; }
 .fairy { background-color: #EE99AC; }
@@ -263,7 +269,7 @@ footer button:hover {
 .psychic { background-color: #F85888; }
 .rock { background-color: #B8A038; }
 .steel { background-color: #B8B8D0; }
-.water { background-color: #6890F0; }
+.water { background-color: #6890F0; } */
 
 /* Add these styles for type boxes */
 .type-box {
