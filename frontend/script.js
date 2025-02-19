@@ -139,19 +139,12 @@ function randomizePokemon() {
     const filtered = filteredPokemon();
     const hasFilters = searchInput.value || filterSelect.value || weaknessFilterSelect.value;
     
-    console.log('Filters applied:', {
-        search: searchInput.value,
-        type: filterSelect.value,
-        weakness: weaknessFilterSelect.value
-    });
-    console.log('Number of filtered Pokemon:', filtered.length);
+   
 
     if (hasFilters) {
         console.log('Shuffling filtered Pokemon only');
         // Create a copy of filtered array to shuffle
-        const shuffledFiltered = [...filtered].sort(() => Math.random() - 0.5);
-        console.log('Original filtered order:', filtered.map(p => p.name));
-        console.log('Shuffled filtered order:', shuffledFiltered.map(p => p.name));
+       
         
         // Create a new array with shuffled filtered Pokemon
         const newPokemonData = [...pokemonData];
@@ -167,10 +160,10 @@ function randomizePokemon() {
             }
         });
         
-        console.log('Updated Pokemon data with shuffled filtered Pokemon');
+       
         pokemonData = newPokemonData;
     } else {
-        console.log('Shuffling all Pokemon');
+        
         pokemonData.sort(() => Math.random() - 0.5);
     }
     
