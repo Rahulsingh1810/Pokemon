@@ -135,7 +135,46 @@ function clearFilters() {
 }
 
 function randomizePokemon() {
-    pokemonData.sort(() => Math.random() - 0.5);
+    // Get filtered pokemon if any filters are applied
+    const filtered = filteredPokemon();
+    const hasFilters = searchInput.value || filterSelect.value || weaknessFilterSelect.value;
+    
+    console.log('Filters applied:', {
+        search: searchInput.value,
+        type: filterSelect.value,
+        weakness: weaknessFilterSelect.value
+    });
+    console.log('Number of filtered Pokemon:', filtered.length);
+
+    if (hasFilters) {
+        console.log('Shuffling filtered Pokemon only');
+        // Create a copy of filtered array to shuffle
+        const shuffledFiltered = [...filtered].sort(() => Math.random() - 0.5);
+        console.log('Original filtered order:', filtered.map(p => p.name));
+        console.log('Shuffled filtered order:', shuffledFiltered.map(p => p.name));
+        
+        // Create a new array with shuffled filtered Pokemon
+        const newPokemonData = [...pokemonData];
+        const filteredIndices = filtered.map(f => 
+            newPokemonData.findIndex(p => p.number === f.number)
+        );
+        
+        // Replace Pokemon at original indices with shuffled ones
+        shuffledFiltered.forEach((pokemon, index) => {
+            const originalIndex = filteredIndices[index];
+            if (originalIndex !== -1) {
+                newPokemonData[originalIndex] = pokemon;
+            }
+        });
+        
+        console.log('Updated Pokemon data with shuffled filtered Pokemon');
+        pokemonData = newPokemonData;
+    } else {
+        console.log('Shuffling all Pokemon');
+        pokemonData.sort(() => Math.random() - 0.5);
+    }
+    
+    currentPage = 1; // Reset to first page
     displayPokemon();
 }
 

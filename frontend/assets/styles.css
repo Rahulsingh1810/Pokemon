@@ -104,6 +104,9 @@ footer {
     background: rgba(229, 231, 235, 0.1); 
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    position: sticky;
+    z-index: 1000;
+    bottom: 0;
 }
 
 footer button {
