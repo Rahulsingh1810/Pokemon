@@ -23,11 +23,6 @@ main {
     padding-right: 10px;
 }
 
-.logo_ball {
-    width: 75px; /* Reduced size */
-    margin: 5px;
-    padding-right: 10px;
-}
 
 header {
     position: sticky;
@@ -113,17 +108,58 @@ header input, header select, header button {
 }
 
 footer {
-    margin-top: auto;
-    padding: 20px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
     background: rgba(229, 231, 235, 0.1);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    width: 100%;
+    padding: 10px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     box-sizing: border-box;
 }
 
+.pagination {
+    display: flex;
+    gap: 10px;
+    margin-left: 10px;
+}
+
+.pagination button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff5350;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+}
+
+.deck-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 10px;
+}
+
+.pokeball-icon {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+#deckCount {
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
 footer button {
-    padding: 10px 20px;
+    padding: 5px 10px;
     margin: 10px;
     border: none;
     border-radius: 5px;
@@ -186,6 +222,34 @@ footer button:hover {
 
     .menu-container.show {
         display: flex;
+    }
+
+    footer {
+        padding: 8px;
+    }
+
+    .pagination {
+        margin-left: 5px;
+        gap: 5px;
+    }
+
+    .pagination button {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .deck-container {
+        margin-right: 5px;
+        gap: 5px;
+    }
+
+    .pokeball-icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    #deckCount {
+        font-size: 12px;
     }
 }
 
@@ -284,48 +348,6 @@ footer button:hover {
 .grass .type-box { background-color: #78C850; }
 .poison .type-box { background-color: #A040A0; }
 /* Add similar styles for other types */
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-}
-
-.pagination button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.8);
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.pagination button:disabled {
-    background-color: rgba(200, 200, 200, 0.5);
-    cursor: not-allowed;
-}
-
-.pagination button:hover:not(:disabled) {
-    background-color: rgba(255, 255, 255, 1);
-}
-
-.pagination span {
-    color: white;
-    font-weight: bold;
-}
-
-@media (max-width: 768px) {
-    .pagination {
-        flex-wrap: wrap;
-    }
-    
-    .pagination button {
-        font-size: 14px;
-        padding: 4px 8px;
-    }
-}
 
 .logout-btn {
     background: #ff5350;
