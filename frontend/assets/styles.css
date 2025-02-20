@@ -44,12 +44,70 @@ header h1 {
     color: black;
 }
 
-header input, header select, header button {
-    padding: 5px;
-    margin: 5px;
-    border: none;
-    border-radius: 5px;
+/* 🔹 Styled Search Input */
+header input {
+    padding: 10px;
+    width: 250px;
+    border: 2px solid #FFD700; /* Golden border */
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.2); /* Transparent white */
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    outline: none;
+    transition: all 0.3s ease-in-out;
 }
+
+/* 🔹 Search Input - Hover & Focus Effects */
+header input::placeholder {
+    color: black;
+    text-align: center;
+    
+}
+header input:focus {
+    background: black; /* Light golden glow */
+    border-color: white;
+}
+
+/* 🔹 Styled Dropdowns */
+header select {
+    padding: 10px;
+    width: 200px;
+    border: 2px solid #FFD700;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+/* 🔹 Dropdown Hover Effect */
+header select:hover, header select:focus {
+    background: black;
+    border-color: white;
+}
+
+/* 🔹 Button Styling */
+header button {
+    padding: 10px 15px;
+    border-radius: 25px;
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    color: black;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease-in-out;
+}
+
+header button:hover {
+    background: linear-gradient(45deg, #FFA500, #FFD700);
+    transform: scale(1.05);
+}
+
 
 .hamburger-menu {
     display: none;
