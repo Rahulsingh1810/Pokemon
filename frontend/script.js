@@ -35,22 +35,37 @@ function filteredPokemon() {
     const filterType = filterSelect.value.toLowerCase();
     const filterWeakness = weaknessFilterSelect.value.toLowerCase();
 
-    return pokemonData.filter(pokemon => {
-        const matchesSearch = 
-            pokemon.name.toLowerCase().includes(searchTerm) || 
-            pokemon.number.includes(searchTerm);
-
+    let filtered = pokemonData.filter(pokemon => {
+        const nameLower = pokemon.name.toLowerCase();
+        const numberMatch = pokemon.number.includes(searchTerm);
+        
+        const matchesSearch = nameLower.includes(searchTerm) || numberMatch;
         const matchesFilter = filterType 
             ? pokemon.type.some(type => type.toLowerCase() === filterType) 
             : true;
-
         const matchesWeakness = filterWeakness 
             ? pokemon.weakness && pokemon.weakness.some(weak => weak.toLowerCase() === filterWeakness) 
             : true;
 
         return matchesSearch && matchesFilter && matchesWeakness;
     });
+
+    // ✅ Sort so names that **start** with the search term come first
+    filtered.sort((a, b) => {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+
+        const startsWithA = nameA.startsWith(searchTerm);
+        const startsWithB = nameB.startsWith(searchTerm);
+
+        if (startsWithA && !startsWithB) return -1; // A comes first
+        if (!startsWithA && startsWithB) return 1;  // B comes first
+        return nameA.localeCompare(nameB); // Alphabetical order as fallback
+    });
+
+    return filtered;
 }
+
 
 // ✅ Fix: Display Pokémon Correctly
 function displayPokemon() {
