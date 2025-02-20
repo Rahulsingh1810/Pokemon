@@ -102,11 +102,12 @@ function sortPokemon(pokemonList) {
 function displayPokemon() {
     pokemonContainer.innerHTML = ''; // Clear previous cards
 
+    let allFilteredPokemon = getFinalPokemon(); // ✅ Use new function
+
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
 
-    // ✅ Apply Search → Filter → Sort → Pagination
-    let pokemonToDisplay = sortPokemon(filterPokemon(searchPokemon())).slice(start, end);
+    let pokemonToDisplay = allFilteredPokemon.slice(start, end); // ✅ Correct Pagination
 
     if (pokemonToDisplay.length === 0) {
         pokemonContainer.innerHTML = '<p>No Pokémon found.</p>';
@@ -126,8 +127,10 @@ function displayPokemon() {
         pokemonContainer.appendChild(card);
     });
 
-    updatePagination();
+    updatePagination(); // ✅ Ensure pagination updates correctly
 }
+
+
 
 
 
@@ -193,8 +196,10 @@ prevButton.addEventListener('click', () => {
 });
 
 nextButton.addEventListener('click', () => {
-    if (currentPage * itemsPerPage < filteredPokemon().length) {
-        currentPage++;
+    const totalPages = Math.ceil(getFinalPokemon().length / itemsPerPage); 
+
+    if (currentPage < totalPages) { 
+        currentPage++; // Move to the next page
         displayPokemon();
     }
 });
@@ -210,11 +215,8 @@ clearFilterButton.addEventListener('click', () => {
 });
 
 // ✅ Randomize Pokémon Order
-randomizeButton.addEventListener('click', () => {
-    pokemonData.sort(() => Math.random() - 0.5);
-    currentPage = 1;
-    displayPokemon();
-});
+randomizeButton.addEventListener('click', randomizePokemon);
+
 
 // ✅ Hamburger Menu Controls
 hamburgerMenu.addEventListener('click', () => {
@@ -232,18 +234,78 @@ logoutBtn.addEventListener('click', () => {
     window.location.href = 'login.html';
 });
 // ✅ Fix: Ensure pagination updates correctly
+// ✅ Fix: Ensure Pagination Works Properly
 function updatePagination() {
-    const totalPokemon = filteredPokemon().length;
+    const totalPokemon = sortPokemon(filterPokemon(searchPokemon())).length;
     const totalPages = Math.ceil(totalPokemon / itemsPerPage);
-    
+
     prevButton.disabled = currentPage === 1;
     nextButton.disabled = currentPage >= totalPages;
 
-    if (totalPages === 0) {
+    if (totalPages <= 1) {
         prevButton.style.display = "none";
         nextButton.style.display = "none";
     } else {
         prevButton.style.display = "inline-block";
         nextButton.style.display = "inline-block";
     }
+}
+
+// ✅ Function: Randomize the Displayed Pokémon
+// ✅ Function: Randomize Pokémon on Screen or Full List
+function randomizePokemon() {
+    let pokemonList;
+
+    if (searchInput.value || filterSelect.value || weaknessFilterSelect.value || sortSelect.value) {
+        // ✅ Shuffle only the currently displayed Pokémon (filtered/sorted/search results)
+        pokemonList = getFinalPokemon();
+    } else {
+        // ✅ If no search or filter is applied, shuffle the entire dataset
+        pokemonList = [...pokemonData]; // Copy the original list to avoid modifying `pokemonData`
+    }
+
+    // ✅ Shuffle the selected list
+    for (let i = pokemonList.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pokemonList[i], pokemonList[j]] = [pokemonList[j], pokemonList[i]];
+    }
+
+    currentPage = 1; // ✅ Reset to the first page after shuffle
+    displayShuffledPokemon(pokemonList); // ✅ Update display with the shuffled Pokémon
+}
+
+// ✅ Function: Display Shuffled Pokémon
+function displayShuffledPokemon(shuffledList) {
+    pokemonContainer.innerHTML = ''; // ✅ Clear previous cards
+
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    let pokemonToDisplay = shuffledList.slice(start, end); // ✅ Get only Pokémon for the current page
+
+    if (pokemonToDisplay.length === 0) {
+        pokemonContainer.innerHTML = '<p>No Pokémon found.</p>';
+        return;
+    }
+
+    pokemonToDisplay.forEach(pokemon => {
+        const card = document.createElement('div');
+        card.className = `pokemon-card ${pokemon.type[0]}`;
+        card.innerHTML = `
+            <img src="${pokemon.ThumbnailImage}" alt="${pokemon.ThumbnailAltText}">
+            <h3>${pokemon.name}</h3>
+            <p>#${pokemon.number}</p>
+            <p>Type: ${pokemon.type.join(', ')}</p>
+        `;
+        card.addEventListener('click', () => openModal(pokemon));
+        pokemonContainer.appendChild(card);
+    });
+
+    updatePagination(); // ✅ Ensure pagination updates correctly
+}
+
+
+
+// ✅ Function: Combines Search, Filter, and Sorting
+function getFinalPokemon() {
+    return sortPokemon(filterPokemon(searchPokemon())); // ✅ Apply Search → Filter → Sort
 }
