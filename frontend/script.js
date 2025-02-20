@@ -15,144 +15,56 @@ const logoutBtn = document.getElementById('logoutBtn');
 let currentPage = 1;
 const itemsPerPage = 15;
 let pokemonData = [];
-let wasRandomized = false;
 
+// ✅ Fetch Pokémon Data
 async function getData() {
     try {
         const response = await fetch('http://localhost:8080/pokemon-data');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        pokemonData = data;
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        pokemonData = await response.json();
         displayPokemon();
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 }
 
-searchInput.addEventListener('input', displayPokemon);
-filterSelect.addEventListener('change', displayPokemon);
-weaknessFilterSelect.addEventListener('change', displayPokemon);
-sortSelect.addEventListener('change', () => {
-    const sortValue = sortSelect.value;
-    
-    if (sortValue.startsWith('name')) {
-        const isAsc = sortValue === 'nameAsc';
-        pokemonData.sort((a, b) => {
-            return isAsc ? 
-                a.name.localeCompare(b.name) : 
-                b.name.localeCompare(a.name);
-        });
-    } else if (sortValue.startsWith('number')) {
-        const isAsc = sortValue === 'numberAsc';
-        pokemonData.sort((a, b) => {
-            return isAsc ? 
-                parseInt(a.number) - parseInt(b.number) : 
-                parseInt(b.number) - parseInt(a.number);
-        });
-    }
-    
-    currentPage = 1; // Reset to first page
-    displayPokemon();
-});
-randomizeButton.addEventListener('click', randomizePokemon);
-clearFilterButton.addEventListener('click', clearFilters);
-prevButton.addEventListener('click', () => {
-    if (currentPage > 1) {
-        currentPage--;
-        displayPokemon();
-    }
-});
-nextButton.addEventListener('click', () => {
-    if (currentPage * itemsPerPage < filteredPokemon().length) {
-        currentPage++;
-        displayPokemon();
-    }
-});
-
-hamburgerMenu.addEventListener('click', () => {
-    menuContainer.classList.toggle('show');
-});
-
-closeMenuButton.addEventListener('click', () => {
-    menuContainer.classList.remove('show');
-});
-
-logoutBtn.addEventListener('click', () => {
-    // Clear all authentication data
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    
-    // Redirect to login page
-    window.location.href = 'login.html';
-});
-
+// ✅ Fix: Improved Filtering Functionality
 function filteredPokemon() {
-    const searchTerm = searchInput.value.toLowerCase();
-    const filterType = filterSelect.value;
-    const filterWeakness = weaknessFilterSelect.value;
-    
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    const filterType = filterSelect.value.toLowerCase();
+    const filterWeakness = weaknessFilterSelect.value.toLowerCase();
+
     return pokemonData.filter(pokemon => {
-        const matchesSearch = pokemon.name.toLowerCase().includes(searchTerm) || pokemon.number.includes(searchTerm);
-        const matchesFilter = filterType ? pokemon.type.includes(filterType) : true;
-        const matchesWeakness = filterWeakness ? 
-            (pokemon.weakness && pokemon.weakness.some(w => w.toLowerCase() === filterWeakness.toLowerCase())) : true;
+        const matchesSearch = 
+            pokemon.name.toLowerCase().includes(searchTerm) || 
+            pokemon.number.includes(searchTerm);
+
+        const matchesFilter = filterType 
+            ? pokemon.type.some(type => type.toLowerCase() === filterType) 
+            : true;
+
+        const matchesWeakness = filterWeakness 
+            ? pokemon.weakness && pokemon.weakness.some(weak => weak.toLowerCase() === filterWeakness) 
+            : true;
+
         return matchesSearch && matchesFilter && matchesWeakness;
     });
 }
 
-function updatePagination() {
-    const totalPokemon = filteredPokemon().length;
-    const totalPages = Math.ceil(totalPokemon / itemsPerPage);
-    const footer = document.querySelector('footer');
-    
-    footer.innerHTML = `
-        <div class="pagination">
-            <button id="firstPage" ${currentPage === 1 ? 'disabled' : ''}>First</button>
-            <button id="prevPage" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
-            <span>Page ${currentPage} of ${totalPages}</span>
-            <button id="nextPage" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
-            <button id="lastPage" ${currentPage === totalPages ? 'disabled' : ''}>Last</button>
-        </div>
-    `;
-
-    // Add event listeners for pagination buttons
-    document.getElementById('firstPage').addEventListener('click', () => goToPage(1));
-    document.getElementById('prevPage').addEventListener('click', () => goToPage(currentPage - 1));
-    document.getElementById('nextPage').addEventListener('click', () => goToPage(currentPage + 1));
-    document.getElementById('lastPage').addEventListener('click', () => goToPage(totalPages));
-}
-
-function goToPage(page) {
-    const totalPages = Math.ceil(filteredPokemon().length / itemsPerPage);
-    if (page >= 1 && page <= totalPages) {
-        currentPage = page;
-        displayPokemon();
-    }
-}
-
+// ✅ Fix: Display Pokémon Correctly
 function displayPokemon() {
-    pokemonContainer.innerHTML = '';
+    pokemonContainer.innerHTML = ''; // Clear previous cards
+
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     
-    // Remove duplicates first
-    const uniquePokemon = [];
-    const seenNumbers = new Set();
-    pokemonData.forEach(pokemon => {
-        if (!seenNumbers.has(pokemon.number)) {
-            seenNumbers.add(pokemon.number);
-            uniquePokemon.push(pokemon);
-        }
-    });
-    
-    // Update pokemonData with unique Pokemon
-    pokemonData = uniquePokemon;
-    
-    // Now proceed with filtering and sorting
-    let pokemonToDisplay = filteredPokemon();
-    pokemonToDisplay = pokemonData.slice(start, end);
+    let pokemonToDisplay = filteredPokemon().slice(start, end); // Use filtered list
+
+    if (pokemonToDisplay.length === 0) {
+        pokemonContainer.innerHTML = '<p>No Pokémon found.</p>';
+        return;
+    }
 
     pokemonToDisplay.forEach(pokemon => {
         const card = document.createElement('div');
@@ -170,70 +82,18 @@ function displayPokemon() {
     updatePagination();
 }
 
-function clearFilters() {
-    searchInput.value = '';
-    filterSelect.value = '';
-    weaknessFilterSelect.value = '';
-    sortSelect.value = '';
-    currentPage = 1;
-    wasRandomized = false;
-    
-    // Remove duplicates and sort by number
-    const uniquePokemon = [];
-    const seenNumbers = new Set();
-    
-    [...pokemonData]
-        .sort((a, b) => parseInt(a.number) - parseInt(b.number))
-        .forEach(pokemon => {
-            if (!seenNumbers.has(pokemon.number)) {
-                seenNumbers.add(pokemon.number);
-                uniquePokemon.push(pokemon);
-            }
-        });
-    
-    pokemonData = uniquePokemon;
-    displayPokemon();
-}
+// ✅ Ensure Filters Update Pokémon List
+searchInput.addEventListener('input', displayPokemon);
+filterSelect.addEventListener('change', displayPokemon);
+weaknessFilterSelect.addEventListener('change', displayPokemon);
 
-function randomizePokemon() {
-    wasRandomized = true;
-    // Get filtered pokemon if any filters are applied
-    const filtered = filteredPokemon();
-    const hasFilters = searchInput.value || filterSelect.value || weaknessFilterSelect.value;
-
-    if (hasFilters) {
-        // Create a copy of filtered array to shuffle
-        const shuffledFiltered = [...filtered].sort(() => Math.random() - 0.5);
-        
-        // Create a new array with shuffled filtered Pokemon
-        const newPokemonData = [...pokemonData];
-        const filteredIndices = filtered.map(f => 
-            newPokemonData.findIndex(p => p.number === f.number)
-        );
-        
-        // Replace Pokemon at original indices with shuffled ones
-        shuffledFiltered.forEach((pokemon, index) => {
-            const originalIndex = filteredIndices[index];
-            if (originalIndex !== -1) {
-                newPokemonData[originalIndex] = pokemon;
-            }
-        });
-        
-        pokemonData = newPokemonData;
-    } else {
-        pokemonData.sort(() => Math.random() - 0.5);
-    }
-    
-    currentPage = 1; // Reset to first page
-    displayPokemon();
-}
-
-// Function to open modal
+// ✅ Fix: Ensure Modal Doesn't Show Empty on Reload
 function openModal(pokemon) {
-    console.log(`Opening modal for: ${pokemon.name}`); // Debugging log
+    if (!pokemon) return; // Prevents opening empty modal
+
     const modal = document.getElementById('pokemon-modal');
     const pokemonDetails = document.getElementById('pokemon-details');
-    // Display Pokémon details in the modal
+
     pokemonDetails.innerHTML = `
         <h2>${pokemon.name}</h2>
         <img src="${pokemon.ThumbnailImage}" alt="${pokemon.ThumbnailAltText}">
@@ -242,29 +102,103 @@ function openModal(pokemon) {
         <p>Height: ${pokemon.height}</p>
         <p>Weight: ${pokemon.weight}</p>
         <p>Abilities: ${pokemon.abilities.join(', ')}</p>
-        <p>Weaknesses: ${pokemon.weakness.join(', ')}</p>
+        <p>Weaknesses: ${pokemon.weakness ? pokemon.weakness.join(', ') : 'None'}</p>
     `;
-    modal.style.display = 'block';
+
+    modal.style.display = 'flex'; // Show modal
 }
 
+// ✅ Hide Modal on Page Load
 document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('pokemon-modal');
+    modal.style.display = 'none'; // Hide modal on reload
+
     const closeButton = document.querySelector('.close-button');
+    closeButton.onclick = () => modal.style.display = 'none';
 
-    // Close modal when the close button is clicked
-    closeButton.onclick = function() {
-        console.log('Closing modal'); // Debugging log
-        const modal = document.getElementById('pokemon-modal');
-        modal.style.display = 'none';
-    }
+    window.onclick = event => {
+        if (event.target === modal) modal.style.display = 'none';
+    };
 
-    // Close modal when clicking outside of the modal content
-    window.onclick = function(event) {
-        const modal = document.getElementById('pokemon-modal');
-        if (event.target == modal) {
-            console.log('Closing modal from outside click'); // Debugging log
-            modal.style.display = 'none';
-        }
-    }
-
-    getData();
+    getData(); // Fetch Pokémon data
 });
+
+// ✅ Sorting Functionality
+sortSelect.addEventListener('change', () => {
+    const sortValue = sortSelect.value;
+    
+    if (sortValue.startsWith('name')) {
+        const isAsc = sortValue === 'nameAsc';
+        pokemonData.sort((a, b) => isAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+    } else if (sortValue.startsWith('number')) {
+        const isAsc = sortValue === 'numberAsc';
+        pokemonData.sort((a, b) => isAsc ? parseInt(a.number) - parseInt(b.number) : parseInt(b.number) - parseInt(a.number));
+    }
+
+    currentPage = 1; // Reset to first page
+    displayPokemon();
+});
+
+// ✅ Pagination Buttons
+prevButton.addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        displayPokemon();
+    }
+});
+
+nextButton.addEventListener('click', () => {
+    if (currentPage * itemsPerPage < filteredPokemon().length) {
+        currentPage++;
+        displayPokemon();
+    }
+});
+
+// ✅ Clear Filters
+clearFilterButton.addEventListener('click', () => {
+    searchInput.value = '';
+    filterSelect.value = '';
+    weaknessFilterSelect.value = '';
+    sortSelect.value = '';
+    currentPage = 1;
+    displayPokemon();
+});
+
+// ✅ Randomize Pokémon Order
+randomizeButton.addEventListener('click', () => {
+    pokemonData.sort(() => Math.random() - 0.5);
+    currentPage = 1;
+    displayPokemon();
+});
+
+// ✅ Hamburger Menu Controls
+hamburgerMenu.addEventListener('click', () => {
+    menuContainer.classList.toggle('show');
+});
+
+closeMenuButton.addEventListener('click', () => {
+    menuContainer.classList.remove('show');
+});
+
+// ✅ Logout Functionality
+logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+});
+// ✅ Fix: Ensure pagination updates correctly
+function updatePagination() {
+    const totalPokemon = filteredPokemon().length;
+    const totalPages = Math.ceil(totalPokemon / itemsPerPage);
+    
+    prevButton.disabled = currentPage === 1;
+    nextButton.disabled = currentPage >= totalPages;
+
+    if (totalPages === 0) {
+        prevButton.style.display = "none";
+        nextButton.style.display = "none";
+    } else {
+        prevButton.style.display = "inline-block";
+        nextButton.style.display = "inline-block";
+    }
+}
