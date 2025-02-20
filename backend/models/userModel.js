@@ -2,6 +2,46 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+// Define a Pokemon schema for the battle deck
+const pokemonSchema = new mongoose.Schema({
+    number: {
+        type: String,
+        required: true
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    ThumbnailImage: {
+        type: String,
+        required: true
+    },
+    ThumbnailAltText: {
+        type: String,
+        required: true
+    },
+    type: {
+        type: [String],
+        required: true
+    },
+    weakness: {
+        type: [String],
+        required: true
+    },
+    height: {
+        type: String,
+        required: true
+    },
+    weight: {
+        type: String,
+        required: true
+    },
+    abilities: {
+        type: [String],
+        required: true
+    }
+});
+
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -20,7 +60,10 @@ const userSchema = new mongoose.Schema({
     profilePicture: {
         type: String,
         default: ''
-    }
+    },
+    battleDeck: [pokemonSchema]  // Using the defined Pokemon schema
+}, {
+    timestamps: true
 });
 
 // Hash the password before saving the user model
