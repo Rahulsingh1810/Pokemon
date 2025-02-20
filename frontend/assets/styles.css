@@ -15,6 +15,10 @@ main {
     flex: 1;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    padding-bottom: 80px; 
 }
 
 .logo {
@@ -51,7 +55,7 @@ header input {
     border: 2px solid #FFD700; /* Golden border */
     border-radius: 25px;
     background: rgba(255, 255, 255, 0.2); /* Transparent white */
-    color: white;
+    color: black;
     font-size: 16px;
     text-align: center;
     outline: none;
@@ -65,7 +69,7 @@ header input::placeholder {
     
 }
 header input:focus {
-    background: black; /* Light golden glow */
+    background: rgba(255, 215, 0, 0.3); /* Light golden glow */
     border-color: white;
 }
 
@@ -76,7 +80,7 @@ header select {
     border: 2px solid #FFD700;
     border-radius: 25px;
     background: rgba(255, 255, 255, 0.2);
-    color: white;
+    color: black;
     font-size: 16px;
     text-align: center;
     outline: none;
@@ -86,7 +90,7 @@ header select {
 
 /* 🔹 Dropdown Hover Effect */
 header select:hover, header select:focus {
-    background: black;
+    background: rgba(255, 215, 0, 0.3);
     border-color: white;
 }
 
@@ -200,6 +204,10 @@ footer {
     font-size: 14px;
 }
 
+.pokemon-card:last-child {
+    margin-bottom: 100px; /* Space for footer */
+}
+
 .deck-container {
     display: flex;
     align-items: center;
@@ -215,7 +223,7 @@ footer {
 }
 
 #deckCount {
-    color: white;
+    color: black;
     font-weight: bold;
     font-size: 14px;
 }
