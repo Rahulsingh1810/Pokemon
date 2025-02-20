@@ -30,41 +30,72 @@ async function getData() {
 }
 
 // ✅ Fix: Improved Filtering Functionality
-function filteredPokemon() {
+// ✅ Function 1: Search Pokémon (Prioritizes Names Starting with Search Term)
+// ✅ Function 1: Search Pokémon (Prioritizes Names Starting with Search Term)
+function searchPokemon() {
     const searchTerm = searchInput.value.toLowerCase().trim();
-    const filterType = filterSelect.value.toLowerCase();
-    const filterWeakness = weaknessFilterSelect.value.toLowerCase();
 
-    let filtered = pokemonData.filter(pokemon => {
+    let searchResults = pokemonData.filter(pokemon => {
         const nameLower = pokemon.name.toLowerCase();
         const numberMatch = pokemon.number.includes(searchTerm);
-        
-        const matchesSearch = nameLower.includes(searchTerm) || numberMatch;
-        const matchesFilter = filterType 
-            ? pokemon.type.some(type => type.toLowerCase() === filterType) 
-            : true;
-        const matchesWeakness = filterWeakness 
-            ? pokemon.weakness && pokemon.weakness.some(weak => weak.toLowerCase() === filterWeakness) 
-            : true;
 
-        return matchesSearch && matchesFilter && matchesWeakness;
+        return nameLower.includes(searchTerm) || numberMatch;
     });
 
-    // ✅ Sort so names that **start** with the search term come first
-    filtered.sort((a, b) => {
+    // ✅ Sort so names that start with the search term come first (Example: "pi" → Pikachu first)
+    searchResults.sort((a, b) => {
         const nameA = a.name.toLowerCase();
         const nameB = b.name.toLowerCase();
 
         const startsWithA = nameA.startsWith(searchTerm);
         const startsWithB = nameB.startsWith(searchTerm);
 
-        if (startsWithA && !startsWithB) return -1; // A comes first
-        if (!startsWithA && startsWithB) return 1;  // B comes first
-        return nameA.localeCompare(nameB); // Alphabetical order as fallback
+        if (startsWithA && !startsWithB) return -1; // A first
+        if (!startsWithA && startsWithB) return 1;  // B first
+        return nameA.localeCompare(nameB); // Alphabetical fallback
     });
 
-    return filtered;
+    return searchResults;
 }
+
+// ✅ Function 2: Filter Pokémon by Type & Weakness
+function filterPokemon(pokemonList) {
+    const filterType = filterSelect.value.toLowerCase();
+    const filterWeakness = weaknessFilterSelect.value.toLowerCase();
+
+    return pokemonList.filter(pokemon => {
+        const matchesType = filterType 
+            ? pokemon.type.some(type => type.toLowerCase() === filterType) 
+            : true;
+
+        const matchesWeakness = filterWeakness 
+            ? pokemon.weakness && pokemon.weakness.some(weak => weak.toLowerCase() === filterWeakness) 
+            : true;
+
+        return matchesType && matchesWeakness;
+    });
+}
+
+
+// ✅ Function 2: Sort Pokémon (Sorts After Searching)
+// ✅ Function 3: Sort Pokémon (Sorts After Search & Filter)
+function sortPokemon(pokemonList) {
+    const sortValue = sortSelect.value;
+    
+    let sortedList = [...pokemonList]; // Copy the list to avoid modifying original data
+
+    if (sortValue.startsWith('name')) {
+        const isAsc = sortValue === 'nameAsc';
+        sortedList.sort((a, b) => isAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+    } else if (sortValue.startsWith('number')) {
+        const isAsc = sortValue === 'numberAsc';
+        sortedList.sort((a, b) => isAsc ? parseInt(a.number) - parseInt(b.number) : parseInt(b.number) - parseInt(a.number));
+    }
+
+    return sortedList;
+}
+
+
 
 
 // ✅ Fix: Display Pokémon Correctly
@@ -73,8 +104,9 @@ function displayPokemon() {
 
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    
-    let pokemonToDisplay = filteredPokemon().slice(start, end); // Use filtered list
+
+    // ✅ Apply Search → Filter → Sort → Pagination
+    let pokemonToDisplay = sortPokemon(filterPokemon(searchPokemon())).slice(start, end);
 
     if (pokemonToDisplay.length === 0) {
         pokemonContainer.innerHTML = '<p>No Pokémon found.</p>';
@@ -97,10 +129,16 @@ function displayPokemon() {
     updatePagination();
 }
 
+
+
 // ✅ Ensure Filters Update Pokémon List
 searchInput.addEventListener('input', displayPokemon);
 filterSelect.addEventListener('change', displayPokemon);
 weaknessFilterSelect.addEventListener('change', displayPokemon);
+sortSelect.addEventListener('change', () => {
+    currentPage = 1; // Reset to first page after sorting
+    displayPokemon();
+});
 
 // ✅ Fix: Ensure Modal Doesn't Show Empty on Reload
 function openModal(pokemon) {
@@ -139,20 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ✅ Sorting Functionality
+// ✅ Sorting Functionality (Now Uses `sortPokemon()` Independently)
 sortSelect.addEventListener('change', () => {
-    const sortValue = sortSelect.value;
-    
-    if (sortValue.startsWith('name')) {
-        const isAsc = sortValue === 'nameAsc';
-        pokemonData.sort((a, b) => isAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
-    } else if (sortValue.startsWith('number')) {
-        const isAsc = sortValue === 'numberAsc';
-        pokemonData.sort((a, b) => isAsc ? parseInt(a.number) - parseInt(b.number) : parseInt(b.number) - parseInt(a.number));
-    }
-
-    currentPage = 1; // Reset to first page
+    currentPage = 1; // Reset to first page after sorting
     displayPokemon();
 });
+
 
 // ✅ Pagination Buttons
 prevButton.addEventListener('click', () => {
