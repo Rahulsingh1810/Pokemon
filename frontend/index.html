@@ -104,20 +104,39 @@
         </div>
     </div>
     
-    <footer>
+    
+
+    <!-- Place this outside the footer -->
+<div id="deckModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="closeDeck">&times;</span>
+        <h3>Your Battle Deck</h3>
+        <div id="deckList"></div>
+    </div>
+</div>
+
+<footer>
+    <!-- ... existing footer content ... -->
+   
         <div class="pagination">
             <button id="prev">Previous</button>
             <button id="next">Next</button>
         </div>
-        <div class="deck-container">
-            <img src="assets/pokeball.png" 
-                 alt="Battle Deck" 
-                 class="pokeball-icon" 
-                 id="showDeck"
-                 onerror="this.onerror=null; console.log('Pokeball image failed to load'); this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBkPSJNMjU2IDhDMTE5IDggOCAxMTkgOCAyNTZzMTExIDI0OCAyNDggMjQ4IDI0OC0xMTEgMjQ4LTI0OFMzOTMgOCAyNTYgOHptMCA0NThjLTExMC41IDAtMjAwLTg5LjUtMjAwLTIwMFMxNDUuNSA2NiAyNTYgNjZzMjAwIDg5LjUgMjAwIDIwMC04OS41IDIwMC0yMDAgMjAweiIvPjwvc3ZnPg=='">
-            <span id="deckCount">0/7</span>
-        </div>
-    </footer>
+       <!-- Bottom Left Battle Deck Section -->
+
+
+       
+       <div class="deck-container">
+        <img src="assets/pokeball.png" alt="Battle Deck" class="pokeball-icon" id="showDeck">
+        <span id="deckCount">0/7</span>
+       <!-- Deck Modal (Updated to Pop Up Like Pokémon Modal) -->
+    
+    
+    </div>
+
+ 
+</footer>
+
     <script src="script.js"></script>
 </body>
 </html>
