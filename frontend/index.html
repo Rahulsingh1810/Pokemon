@@ -110,31 +110,22 @@
 <div id="deckModal" class="modal">
     <div class="modal-content">
         <span class="close-button" id="closeDeck">&times;</span>
-        <h3>Your Battle Deck</h3>
         <div id="deckList"></div>
     </div>
 </div>
 
 <footer>
     <!-- ... existing footer content ... -->
-   
-        <div class="pagination">
-            <button id="prev">Previous</button>
-            <button id="next">Next</button>
-        </div>
-       <!-- Bottom Left Battle Deck Section -->
-
-
-       
-       <div class="deck-container">
-        <img src="assets/pokeball.png" alt="Battle Deck" class="pokeball-icon" id="showDeck">
-        <span id="deckCount">0/7</span>
-       <!-- Deck Modal (Updated to Pop Up Like Pokémon Modal) -->
-    
-    
+    <div class="pagination">
+        <button id="prev">Previous</button>
+        <button id="next">Next</button>
     </div>
-
- 
+    
+    <!-- Deck Container inside the footer -->
+    <div class="deck-container" id="showDeck">
+        <img src="assets/pokeball.png" alt="Battle Deck" class="pokeball-icon">
+        <span id="deckCount">0/7</span>
+    </div>
 </footer>
 
     <script src="script.js"></script>

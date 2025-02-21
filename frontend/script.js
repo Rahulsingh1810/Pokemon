@@ -326,27 +326,33 @@ function getFinalPokemon() {
 
 let battleDeck = JSON.parse(localStorage.getItem('battleDeck')) || [];
 
-function addToDeck(pokemonNumber) {
-    if (battleDeck.length >= 7) {
-        alert('Your battle deck can only hold up to 7 Pokémon.');
-        return;
+async function addToDeck(pokemonNumber) {
+    try {
+        const response = await fetch('http://localhost:8080/api/auth/deck', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ pokemonNumber })
+        });
+
+        console.log('Request URL:', response.url); // Debugging log
+        console.log('Request Status:', response.status); // Debugging log
+
+        if (!response.ok) {
+            const errorText = await response.text(); // Read response as text
+            console.error('Error response:', errorText); // Log the error response
+            alert('Failed to add Pokémon to deck. Please check the console for more details.');
+            return;
+        }
+
+        const updatedDeck = await response.json();
+        battleDeck = updatedDeck;
+        updateDeckDisplay();
+    } catch (error) {
+        console.error('Error adding Pokémon to deck:', error);
     }
-
-    const pokemon = pokemonData.find(p => p.number === pokemonNumber);
-    if (!pokemon) return;
-
-    if (battleDeck.some(p => p.number === pokemonNumber)) {
-        alert(`${pokemon.name} is already in your battle deck!`);
-        return;
-    }
-
-    battleDeck.push(pokemon);
-    localStorage.setItem('battleDeck', JSON.stringify(battleDeck));
-
-    updateDeckDisplay();
-
-    // ✅ Close Pokémon modal after adding to deck
-    document.getElementById('pokemon-modal').style.display = 'none';
 }
 
 
@@ -388,18 +394,33 @@ function removeFromDeck(pokemonNumber) {
 }
 
 document.getElementById('showDeck').addEventListener('click', () => {
-    document.getElementById('deckModal').style.display = 'flex';
+    console.log('Deck container clicked'); // Debugging log
+    const deckModal = document.getElementById('deckModal');
+    if (deckModal) {
+        console.log('Deck modal found'); // Debugging log
+        deckModal.classList.add('show');
+        console.log('Deck modal should now be visible'); // Debugging log
+    } else {
+        console.error('Deck modal not found'); // Debugging log
+    }
 });
 
 document.getElementById('closeDeck').addEventListener('click', () => {
-    document.getElementById('deckModal').style.display = 'none';
+    console.log('Close button clicked'); // Debugging log
+    const deckModal = document.getElementById('deckModal');
+    if (deckModal) {
+        deckModal.classList.remove('show');
+        console.log('Deck modal should now be hidden'); // Debugging log
+    } else {
+        console.error('Deck modal not found'); // Debugging log
+    }
 });
-
 
 window.addEventListener('click', (event) => {
     const deckModal = document.getElementById('deckModal');
     if (event.target === deckModal) {
-        deckModal.style.display = 'none';
+        console.log('Clicked outside modal, closing modal'); // Debugging log
+        deckModal.classList.remove('show');
     }
 });
 
@@ -408,4 +429,48 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDeckDisplay();
 });
 // ✅ Initialize deck display on page load
+
+// Function to fetch and display the user's deck
+async function fetchDeck() {
+    try {
+        const response = await fetch('http://localhost:8080/api/auth/deck', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (!response.ok) throw new Error('Failed to fetch deck');
+        
+        const deck = await response.json();
+        battleDeck = deck;
+        updateDeckDisplay();
+    } catch (error) {
+        console.error('Error fetching deck:', error);
+    }
+}
+
+// Function to remove a Pokémon from the deck via API
+async function removeFromDeck(pokemonNumber) {
+    try {
+        const response = await fetch(`http://localhost:8080/api/auth/deck/${pokemonNumber}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (!response.ok) throw new Error('Failed to remove Pokémon from deck');
+        
+        const updatedDeck = await response.json();
+        battleDeck = updatedDeck;
+        updateDeckDisplay();
+    } catch (error) {
+        console.error('Error removing Pokémon from deck:', error);
+    }
+}
+
+// Call fetchDeck on page load to initialize deck display
+document.addEventListener('DOMContentLoaded', () => {
+    fetchDeck();
+    document.getElementById('deckModal').style.display = 'none';
+    updateDeckDisplay();
+});
 

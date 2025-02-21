@@ -152,6 +152,13 @@
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
+            // Strong password validation
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!passwordRegex.test(password)) {
+                alert('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.');
+                return;
+            }
+
             if (password !== confirmPassword) {
                 alert('Passwords do not match');
                 return;

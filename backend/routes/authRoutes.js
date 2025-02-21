@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
+const Pokemon = require('../models/pokemonModel');
 
 // Register route
 router.post('/register', async (req, res) => {
@@ -70,9 +71,13 @@ router.post('/login', async (req, res) => {
 // Get user's battle deck
 router.get('/deck', auth, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.user.id).populate('battleDeck');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
         res.json(user.battleDeck);
     } catch (error) {
+        console.error('Error fetching deck:', error); // Log the error for debugging
         res.status(500).json({ message: error.message });
     }
 });
@@ -80,19 +85,31 @@ router.get('/deck', auth, async (req, res) => {
 // Update user's battle deck
 router.put('/deck', auth, async (req, res) => {
     try {
-        const { deck } = req.body;
-        
-        // Validate deck size
-        if (deck.length > 7) {
-            return res.status(400).json({ message: 'Deck cannot exceed 7 Pokemon' });
+        const { pokemonNumber } = req.body;
+        const user = await User.findById(req.user.id);
+
+        // Check if the Pokémon is already in the deck
+        if (user.battleDeck.some(pokemon => pokemon.number === pokemonNumber)) {
+            return res.status(400).json({ message: 'Pokémon is already in the deck' });
         }
 
-        const user = await User.findById(req.user.id);
-        user.battleDeck = deck;
+        // Check if the deck is full
+        if (user.battleDeck.length >= 7) {
+            return res.status(400).json({ message: 'Deck cannot exceed 7 Pokémon' });
+        }
+
+        // Add the Pokémon to the deck
+        const pokemon = await Pokemon.findOne({ number: pokemonNumber });
+        if (!pokemon) {
+            return res.status(404).json({ message: 'Pokémon not found' });
+        }
+
+        user.battleDeck.push(pokemon);
         await user.save();
 
-        res.json({ message: 'Battle deck updated successfully', deck: user.battleDeck });
+        res.json(user.battleDeck);
     } catch (error) {
+        console.error('Error updating deck:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -107,6 +124,37 @@ router.delete('/deck/:pokemonNumber', auth, async (req, res) => {
         await user.save();
 
         res.json({ message: 'Pokemon removed from deck', deck: user.battleDeck });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Add a Pokémon to the user's deck
+router.post('/deck', auth, async (req, res) => {
+    try {
+        const { pokemonNumber } = req.body;
+        const user = await User.findById(req.user.id);
+
+        // Check if the Pokémon is already in the deck
+        if (user.battleDeck.some(pokemon => pokemon.number === pokemonNumber)) {
+            return res.status(400).json({ message: 'Pokémon is already in the deck' });
+        }
+
+        // Check if the deck is full
+        if (user.battleDeck.length >= 7) {
+            return res.status(400).json({ message: 'Deck cannot exceed 7 Pokémon' });
+        }
+
+        // Add the Pokémon to the deck
+        const pokemon = await Pokemon.findOne({ number: pokemonNumber });
+        if (!pokemon) {
+            return res.status(404).json({ message: 'Pokémon not found' });
+        }
+
+        user.battleDeck.push(pokemon);
+        await user.save();
+
+        res.json(user.battleDeck);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

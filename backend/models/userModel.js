@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
-        unique: true
+        unique: false
     },
     email: {
         type: String,
@@ -84,3 +84,17 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
+
+async function initializeBattleDeck() {
+    try {
+        await User.updateMany(
+            { battleDeck: { $exists: false } },
+            { $set: { battleDeck: [] } }
+        );
+        console.log('Battle decks initialized for all users.');
+    } catch (error) {
+        console.error('Error initializing battle decks:', error);
+    }
+}
+
+initializeBattleDeck();
