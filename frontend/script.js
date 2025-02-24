@@ -24,7 +24,7 @@ async function getData() {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
         pokemonData = await response.json();
-        console.log('Fetched Pokémon data:', pokemonData); // Debugging log
+         // Debugging log
         displayPokemon();
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -161,7 +161,7 @@ function openModal(pokemon) {
 
     const modal = document.getElementById('pokemon-modal');
     const pokemonDetails = document.getElementById('pokemon-details');
-    console.log('pokemonDetails:', pokemonDetails); // Debugging log
+   // Debugging log
 
     if (!pokemonDetails) {
         console.error('pokemon-details element not found');
@@ -243,9 +243,7 @@ hamburgerMenu.addEventListener('click', () => {
     menuContainer.classList.toggle('show');
 });
 
-closeMenuButton.addEventListener('click', () => {
-    menuContainer.classList.remove('show');
-});
+
 
 // ✅ Logout Functionality
 logoutBtn.addEventListener('click', () => {
@@ -428,7 +426,7 @@ async function removeFromDeck(pokemonNumber) {
 document.addEventListener('DOMContentLoaded', () => {
     fetchDeck();
     const deckModal = document.getElementById('deckModal');
-    console.log('deckModal:', deckModal); // Debugging log
+   // Debugging log
     if (deckModal) {
         deckModal.style.display = 'none';
     }
