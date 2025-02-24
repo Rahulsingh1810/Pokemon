@@ -9,93 +9,65 @@ const prevButton = document.getElementById('prev');
 const nextButton = document.getElementById('next');
 const hamburgerMenu = document.getElementById('hamburger-menu');
 const menuContainer = document.getElementById('menu-container');
-const closeMenuButton = document.getElementById('close-menu');
 const logoutBtn = document.getElementById('logoutBtn');
+const showDeckButton = document.getElementById('showDeck');
 
 let currentPage = 1;
 const itemsPerPage = 15;
 let pokemonData = [];
+let battleDeck = [];
 let isRandomized = false;
 
-const socket = io('http://localhost:8080'); // Connect to the same port
-
-socket.on('deckUpdated', (updatedDeck) => {
-    battleDeck = updatedDeck;
-    updateDeckDisplay();
-});
-
-// ✅ Fetch Pokémon Data
+// Fetch Pokémon Data
 async function getData() {
     try {
         const response = await fetch('http://localhost:8080/pokemon-data');
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        
         pokemonData = await response.json();
-         // Debugging log
         displayPokemon();
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 }
 
-// ✅ Fix: Improved Filtering Functionality
-// ✅ Function 1: Search Pokémon (Prioritizes Names Starting with Search Term)
-// ✅ Function 1: Search Pokémon (Prioritizes Names Starting with Search Term)
+// Search Pokémon
 function searchPokemon() {
     const searchTerm = searchInput.value.toLowerCase().trim();
-
     let searchResults = pokemonData.filter(pokemon => {
         const nameLower = pokemon.name.toLowerCase();
         const numberMatch = pokemon.number.toString().includes(searchTerm);
         return nameLower.includes(searchTerm) || numberMatch;
     });
 
-    // ✅ Prioritize Pokémon that start with the search term
     searchResults.sort((a, b) => {
         const nameA = a.name.toLowerCase();
         const nameB = b.name.toLowerCase();
-
         const startsWithA = nameA.startsWith(searchTerm);
         const startsWithB = nameB.startsWith(searchTerm);
-
         if (startsWithA && !startsWithB) return -1;
         if (!startsWithA && startsWithB) return 1;
-        
-        return nameA.localeCompare(nameB); // Alphabetical fallback
+        return nameA.localeCompare(nameB);
     });
 
     return searchResults;
 }
 
-
-
-
-
-// ✅ Function 2: Filter Pokémon by Type & Weakness
+// Filter Pokémon by Type & Weakness
 function filterPokemon(pokemonList) {
     const filterType = filterSelect.value.toLowerCase();
     const filterWeakness = weaknessFilterSelect.value.toLowerCase();
 
     return pokemonList.filter(pokemon => {
-        const matchesType = filterType 
-            ? pokemon.type.some(type => type.toLowerCase() === filterType) 
-            : true;
-
-        const matchesWeakness = filterWeakness 
-            ? pokemon.weakness && pokemon.weakness.some(weak => weak.toLowerCase() === filterWeakness) 
-            : true;
-
+        const matchesType = filterType ? pokemon.type.some(type => type.toLowerCase() === filterType) : true;
+        const matchesWeakness = filterWeakness ? pokemon.weakness && pokemon.weakness.some(weak => weak.toLowerCase() === filterWeakness) : true;
         return matchesType && matchesWeakness;
     });
 }
 
-
-// ✅ Function 2: Sort Pokémon (Sorts After Searching)
-// ✅ Function 3: Sort Pokémon (Sorts After Search & Filter)
+// Sort Pokémon
 function sortPokemon(pokemonList) {
     const sortValue = sortSelect.value;
-    
-    let sortedList = [...pokemonList]; // Copy the list to avoid modifying original data
+    let sortedList = [...pokemonList];
 
     if (sortValue.startsWith('name')) {
         const isAsc = sortValue === 'nameAsc';
@@ -108,15 +80,11 @@ function sortPokemon(pokemonList) {
     return sortedList;
 }
 
-
-
-// ✅ Fix: Display Pokémon Correctly
+// Display Pokémon
 function displayPokemon() {
-    pokemonContainer.innerHTML = ''; // Clear previous cards
+    pokemonContainer.innerHTML = '';
+    let allFilteredPokemon = getFinalPokemon();
 
-    let allFilteredPokemon = getFinalPokemon(); // Get search, filter, sort applied results
-
-    // ✅ If no search, filter, sort, or randomize is applied, sort by ID (increasing order)
     if (!searchInput.value.trim() && filterSelect.value === "" && weaknessFilterSelect.value === "" && sortSelect.value === "" && !isRandomized) {
         allFilteredPokemon.sort((a, b) => parseInt(a.number) - parseInt(b.number));
     }
@@ -143,37 +111,14 @@ function displayPokemon() {
         pokemonContainer.appendChild(card);
     });
 
-    updatePagination(); // ✅ Ensure pagination updates correctly
+    updatePagination();
 }
 
-
-
-
-
-
-
-
-// ✅ Ensure Filters Update Pokémon List
-searchInput.addEventListener('input', displayPokemon);
-filterSelect.addEventListener('change', displayPokemon);
-weaknessFilterSelect.addEventListener('change', displayPokemon);
-sortSelect.addEventListener('change', () => {
-    currentPage = 1; // Reset to first page after sorting
-    displayPokemon();
-});
-
-// ✅ Fix: Ensure Modal Doesn't Show Empty on Reload
+// Open Pokémon Modal
 function openModal(pokemon) {
-    if (!pokemon) return; // Prevents opening empty modal
-
+    if (!pokemon) return;
     const modal = document.getElementById('pokemon-modal');
     const pokemonDetails = document.getElementById('pokemon-details');
-   // Debugging log
-
-    if (!pokemonDetails) {
-        console.error('pokemon-details element not found');
-        return;
-    }
 
     pokemonDetails.innerHTML = `
         <h2>${pokemon.name}</h2>
@@ -187,51 +132,59 @@ function openModal(pokemon) {
         <button class="add-to-deck" onclick="addToDeck('${pokemon.number}')">Add to Deck</button>
     `;
 
-    modal.style.display = 'flex'; // Show modal
+    modal.style.display = 'flex';
 }
 
-
-// ✅ Hide Modal on Page Load
+// Initialize Page and Hide Modals
 document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('pokemon-modal');
-    modal.style.display = 'none'; // Hide modal on reload
+    const pokemonModal = document.getElementById('pokemon-modal');
+    const deckModal = document.getElementById('deckModal');
 
-    const closeButton = modal.querySelector('.close-button');
-    closeButton.onclick = () => modal.style.display = 'none';
+    // Hide modals on load
+    pokemonModal.style.display = 'none';
+    deckModal.style.display = 'none';
 
-    window.onclick = event => {
-        if (event.target === modal) modal.style.display = 'none';
-    };
+    // Close Pokémon modal
+    pokemonModal.querySelector('.close-button').addEventListener('click', () => {
+        pokemonModal.style.display = 'none';
+    });
 
-    getData(); // Fetch Pokémon data
+    // Close Deck modal
+    deckModal.querySelector('.close-button').addEventListener('click', () => {
+        deckModal.style.display = 'none';
+    });
+
+    // Close modals on outside click
+    window.addEventListener('click', (event) => {
+        if (event.target === pokemonModal) pokemonModal.style.display = 'none';
+        if (event.target === deckModal) deckModal.style.display = 'none';
+    });
+
+    getData();
+    fetchDeck();
 });
 
-// ✅ Sorting Functionality
-// ✅ Sorting Functionality (Now Uses `sortPokemon()` Independently)
+// Event Listeners
+searchInput.addEventListener('input', displayPokemon);
+filterSelect.addEventListener('change', displayPokemon);
+weaknessFilterSelect.addEventListener('change', displayPokemon);
 sortSelect.addEventListener('change', () => {
-    currentPage = 1; // Reset to first page after sorting
+    currentPage = 1;
     displayPokemon();
 });
-
-
-// ✅ Pagination Buttons
 prevButton.addEventListener('click', () => {
     if (currentPage > 1) {
         currentPage--;
         displayPokemon();
     }
 });
-
 nextButton.addEventListener('click', () => {
-    const totalPages = Math.ceil(getFinalPokemon().length / itemsPerPage); 
-
-    if (currentPage < totalPages) { 
-        currentPage++; // Move to the next page
+    const totalPages = Math.ceil(getFinalPokemon().length / itemsPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
         displayPokemon();
     }
 });
-
-// ✅ Clear Filters
 clearFilterButton.addEventListener('click', () => {
     searchInput.value = '';
     filterSelect.value = '';
@@ -240,72 +193,47 @@ clearFilterButton.addEventListener('click', () => {
     currentPage = 1;
     displayPokemon();
 });
-
-// ✅ Randomize Pokémon Order
 randomizeButton.addEventListener('click', randomizePokemon);
-
-
-// ✅ Hamburger Menu Controls
 hamburgerMenu.addEventListener('click', () => {
     menuContainer.classList.toggle('show');
 });
-
-
-
-// ✅ Logout Functionality
 logoutBtn.addEventListener('click', () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     window.location.href = 'login.html';
 });
-// ✅ Fix: Ensure pagination updates correctly
-// ✅ Fix: Ensure Pagination Works Properly
-function updatePagination() {
-    const totalPokemon = sortPokemon(filterPokemon(searchPokemon())).length;
-    const totalPages = Math.ceil(totalPokemon / itemsPerPage);
+showDeckButton.addEventListener('click', () => {
+    const deckModal = document.getElementById('deckModal');
+    updateDeckDisplay();
+    deckModal.style.display = 'flex';
+});
 
+// Update Pagination
+function updatePagination() {
+    const totalPokemon = getFinalPokemon().length;
+    const totalPages = Math.ceil(totalPokemon / itemsPerPage);
     prevButton.disabled = currentPage === 1;
     nextButton.disabled = currentPage >= totalPages;
-
-    if (totalPages <= 1) {
-        prevButton.style.display = "none";
-        nextButton.style.display = "none";
-    } else {
-        prevButton.style.display = "inline-block";
-        nextButton.style.display = "inline-block";
-    }
+    prevButton.style.display = totalPages <= 1 ? 'none' : 'inline-block';
+    nextButton.style.display = totalPages <= 1 ? 'none' : 'inline-block';
 }
 
-// ✅ Function: Randomize the Displayed Pokémon
-// ✅ Function: Randomize Pokémon on Screen or Full List
+// Randomize Pokémon
 function randomizePokemon() {
-    let pokemonList;
-
-    if (searchInput.value || filterSelect.value || weaknessFilterSelect.value || sortSelect.value) {
-        // ✅ Shuffle only the currently displayed Pokémon (filtered/sorted/search results)
-        pokemonList = getFinalPokemon();
-    } else {
-        // ✅ If no search or filter is applied, shuffle the entire dataset
-        pokemonList = [...pokemonData]; // Copy the original list to avoid modifying `pokemonData`
-    }
-
-    // ✅ Shuffle the selected list
+    let pokemonList = searchInput.value || filterSelect.value || weaknessFilterSelect.value || sortSelect.value ? getFinalPokemon() : [...pokemonData];
     for (let i = pokemonList.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [pokemonList[i], pokemonList[j]] = [pokemonList[j], pokemonList[i]];
     }
-
-    currentPage = 1; // ✅ Reset to the first page after shuffle
-    displayShuffledPokemon(pokemonList); // ✅ Update display with the shuffled Pokémon
+    currentPage = 1;
+    displayShuffledPokemon(pokemonList);
 }
 
-// ✅ Function: Display Shuffled Pokémon
 function displayShuffledPokemon(shuffledList) {
-    pokemonContainer.innerHTML = ''; // ✅ Clear previous cards
-
+    pokemonContainer.innerHTML = '';
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    let pokemonToDisplay = shuffledList.slice(start, end); // ✅ Get only Pokémon for the current page
+    let pokemonToDisplay = shuffledList.slice(start, end);
 
     if (pokemonToDisplay.length === 0) {
         pokemonContainer.innerHTML = '<p>No Pokémon found.</p>';
@@ -325,132 +253,79 @@ function displayShuffledPokemon(shuffledList) {
         pokemonContainer.appendChild(card);
     });
 
-    updatePagination(); // ✅ Ensure pagination updates correctly
+    updatePagination();
 }
 
-
-
-// ✅ Function: Combines Search, Filter, and Sorting
+// Combine Search, Filter, and Sort
 function getFinalPokemon() {
-    return sortPokemon(filterPokemon(searchPokemon())); // ✅ Apply Search → Filter → Sort
+    return sortPokemon(filterPokemon(searchPokemon()));
 }
 
-
-let battleDeck = JSON.parse(localStorage.getItem('battleDeck')) || [];
-
+// Deck Operations
 async function addToDeck(pokemonNumber) {
-    try {
-        console.log('Adding Pokémon number:', pokemonNumber); // Debugging log
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('You must be logged in to add Pokémon to your deck.');
+        window.location.href = 'login.html';
+        return;
+    }
 
+    if (battleDeck.some(pokemon => pokemon.number === pokemonNumber)) {
+        alert('This Pokémon is already in your deck.');
+        return;
+    }
+
+    try {
+        console.log('Adding Pokémon with number:', pokemonNumber);
         const response = await fetch('http://localhost:8080/api/auth/deck', {
-            method: 'PUT',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({ pokemonNumber })
         });
 
-        console.log('Request URL:', response.url); // Debugging log
-        console.log('Request Status:', response.status); // Debugging log
-
         if (!response.ok) {
-            const errorText = await response.text(); // Read response as text
-            console.error('Error response:', errorText); // Log the error response
-            alert('Failed to add Pokémon to deck. Please check the console for more details.');
+            const errorData = await response.json();
+            console.error('Error response:', errorData.message);
+            if (errorData.message === 'Pokémon is already in the deck') {
+                alert('This Pokémon is already in your deck.');
+            } else if (errorData.message === 'Deck cannot exceed 7 Pokémon') {
+                alert('Your deck is full (max 7 Pokémon).');
+            } else if (errorData.message === 'Pokémon not found') {
+                alert('Pokémon not found in the database.');
+            } else {
+                alert('Failed to add Pokémon to deck: ' + errorData.message);
+            }
             return;
         }
 
         const updatedDeck = await response.json();
+        console.log('Updated deck:', updatedDeck);
         battleDeck = updatedDeck;
         updateDeckDisplay();
+        alert('Pokémon added to deck successfully!');
+        document.getElementById('pokemon-modal').style.display = 'none';
     } catch (error) {
         console.error('Error adding Pokémon to deck:', error);
+        alert('Failed to add Pokémon to deck due to a network error.');
     }
 }
 
-
-
-function updateDeckDisplay() {
-    const deckList = document.getElementById('deckList');
-    const deckCount = document.getElementById('deckCount');
-    
-    deckList.innerHTML = '';
-    
-    battleDeck.forEach(pokemon => {
-        const deckItem = document.createElement('div');
-        deckItem.className = 'deck-item';
-        deckItem.innerHTML = `
-            <img src="${pokemon.ThumbnailImage}" alt="${pokemon.name}" 
-                 style="width: 80px; height: 80px; object-fit: contain;">
-            <p>${pokemon.name}</p>
-            <button class="remove-from-deck" 
-                    onclick="removeFromDeck('${pokemon.number}')">&times;</button>
-        `;
-        deckList.appendChild(deckItem);
-    });
-
-    deckCount.textContent = `${battleDeck.length}/7`;
-    localStorage.setItem('battleDeck', JSON.stringify(battleDeck));
-}
-
-
-
-// Update deck modal toggle logic
-document.getElementById('showDeck').addEventListener('click', () => {
-    const deckModal = document.getElementById('deckModal');
-    deckModal.style.display = 'flex';
-});
-
-document.querySelectorAll('.close-button').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.getElementById('deckModal').style.display = 'none';
-    });
-});
-
-// Update removeFromDeck function
-async function removeFromDeck(pokemonNumber) {
-    try {
-        const response = await fetch(`http://localhost:8080/api/auth/deck/${pokemonNumber}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        });
-        
-        if (!response.ok) throw new Error('Failed to remove Pokémon');
-        
-        const updatedDeck = await response.json();
-        battleDeck = updatedDeck;
-        updateDeckDisplay();
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to remove Pokémon');
-    }
-}
-
-// Call fetchDeck on page load to initialize deck display
-document.addEventListener('DOMContentLoaded', () => {
-    fetchDeck();
-    const deckModal = document.getElementById('deckModal');
-   // Debugging log
-    if (deckModal) {
-        deckModal.style.display = 'none';
-    }
-    updateDeckDisplay();
-});
-
-// Define the fetchDeck function
 async function fetchDeck() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
     try {
         const response = await fetch('http://localhost:8080/api/auth/deck', {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${token}`
             }
         });
         if (!response.ok) throw new Error('Failed to fetch deck');
-        
         const deck = await response.json();
+        console.log('Fetched deck:', deck);
         battleDeck = deck;
         updateDeckDisplay();
     } catch (error) {
@@ -458,3 +333,61 @@ async function fetchDeck() {
     }
 }
 
+async function removeFromDeck(pokemonNumber) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('You must be logged in to remove Pokémon from your deck.');
+        window.location.href = 'login.html';
+        return;
+    }
+
+    try {
+        console.log('Removing Pokémon with number:', pokemonNumber);
+        console.log('Current battleDeck before removal:', JSON.stringify(battleDeck, null, 2));
+        const response = await fetch(`http://localhost:8080/api/auth/deck/${pokemonNumber}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to remove Pokémon');
+        }
+
+        const updatedDeck = await response.json();
+        console.log('Response from server:', JSON.stringify(updatedDeck, null, 2));
+        battleDeck = updatedDeck.deck; // Use the deck array from the response
+        console.log('Updated battleDeck after removal:', JSON.stringify(battleDeck, null, 2));
+        updateDeckDisplay();
+        alert('Pokémon removed from deck successfully!');
+    } catch (error) {
+        console.error('Error removing Pokémon:', error);
+        alert('Failed to remove Pokémon: ' + error.message);
+    }
+}
+
+function updateDeckDisplay() {
+    const deckList = document.getElementById('deckList');
+    const deckCountFooter = document.querySelector('footer #deckCount');
+    const deckCountModal = document.querySelector('#deckModal #deckCount');
+
+    deckList.innerHTML = '';
+    battleDeck.forEach(pokemon => {
+        const name = pokemon.name || 'Unknown';
+        const image = pokemon.ThumbnailImage || 'assets/placeholder.png';
+        const deckItem = document.createElement('div');
+        deckItem.className = 'deck-item';
+        deckItem.innerHTML = `
+            <img src="${image}" alt="${name}" style="width: 80px; height: 80px; object-fit: contain;">
+            <p>${name}</p>
+            <button class="remove-from-deck" onclick="removeFromDeck('${pokemon.number}')">×</button>
+        `;
+        deckList.appendChild(deckItem);
+    });
+
+    const deckSize = battleDeck.length;
+    deckCountFooter.textContent = `${deckSize}/7`;
+    deckCountModal.textContent = `${deckSize}/7`;
+}

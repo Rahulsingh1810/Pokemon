@@ -16,7 +16,6 @@ router.post('/register', async (req, res) => {
 
     try {
         const userExists = await User.findOne({ email });
-
         if (userExists) {
             return res.status(400).json({ message: 'User already exists' });
         }
@@ -28,17 +27,13 @@ router.post('/register', async (req, res) => {
             profilePicture
         });
 
-        if (user) {
-            res.status(201).json({
-                _id: user._id,
-                username: user.username,
-                email: user.email,
-                profilePicture: user.profilePicture,
-                token: generateToken(user._id)
-            });
-        } else {
-            res.status(400).json({ message: 'Invalid user data' });
-        }
+        res.status(201).json({
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            profilePicture: user.profilePicture,
+            token: generateToken(user._id)
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -50,7 +45,6 @@ router.post('/login', async (req, res) => {
 
     try {
         const user = await User.findOne({ email });
-
         if (user && (await user.matchPassword(password))) {
             res.json({
                 _id: user._id,
@@ -82,58 +76,13 @@ router.get('/deck', auth, async (req, res) => {
     }
 });
 
-// Update user's battle deck
-router.put('/deck', auth, async (req, res) => {
-    try {
-        const { pokemonNumber } = req.body;
-        const user = await User.findById(req.user.id);
-
-        // Check if the Pokémon is already in the deck
-        if (user.battleDeck.some(pokemon => pokemon.number === pokemonNumber)) {
-            return res.status(400).json({ message: 'Pokémon is already in the deck' });
-        }
-
-        // Check if the deck is full
-        if (user.battleDeck.length >= 7) {
-            return res.status(400).json({ message: 'Deck cannot exceed 7 Pokémon' });
-        }
-
-        // Add the Pokémon to the deck
-        const pokemon = await Pokemon.findOne({ number: pokemonNumber });
-        if (!pokemon) {
-            return res.status(404).json({ message: 'Pokémon not found' });
-        }
-
-        user.battleDeck.push(pokemon);
-        await user.save();
-
-        res.json(user.battleDeck);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
-
-// Remove Pokemon from deck
-router.delete('/deck/:pokemonNumber', auth, async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id);
-        user.battleDeck = user.battleDeck.filter(
-            pokemon => pokemon.number !== req.params.pokemonNumber
-        );
-        await user.save();
-
-        res.json({ message: 'Pokemon removed from deck', deck: user.battleDeck });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
-
-// Add a Pokémon to the user's deck
+// Add Pokémon to deck
 router.post('/deck', auth, async (req, res) => {
     try {
         const { pokemonNumber } = req.body;
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.user.id).populate('battleDeck');
 
+        // Check for duplicates using populated data
         if (user.battleDeck.some(pokemon => pokemon.number === pokemonNumber)) {
             return res.status(400).json({ message: 'Pokémon is already in the deck' });
         }
@@ -150,8 +99,43 @@ router.post('/deck', auth, async (req, res) => {
         user.battleDeck.push(pokemon);
         await user.save();
 
-        res.json(user.battleDeck);
+        const updatedUser = await User.findById(req.user.id).populate('battleDeck');
+        res.json(updatedUser.battleDeck);
     } catch (error) {
+        console.error('Error adding Pokémon to deck:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Remove Pokémon from deck
+router.delete('/deck/:pokemonNumber', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        console.log('Before removal, battleDeck (raw ObjectIds):', user.battleDeck);
+
+        // Filter out Pokémon by number (not populated yet)
+        const pokemonToRemove = await Pokemon.findOne({ number: req.params.pokemonNumber });
+        if (!pokemonToRemove) {
+            return res.status(404).json({ message: 'Pokémon not found' });
+        }
+
+        const initialLength = user.battleDeck.length;
+        // Remove all instances of the Pokémon's ObjectId
+        user.battleDeck = user.battleDeck.filter(
+            id => id.toString() !== pokemonToRemove._id.toString()
+        );
+
+        console.log('After filter, battleDeck (raw ObjectIds):', user.battleDeck);
+        if (initialLength === user.battleDeck.length) {
+            console.log('No Pokémon was removed - check ObjectId match');
+        }
+
+        await user.save();
+        const updatedUser = await User.findById(req.user.id).populate('battleDeck');
+        console.log('After save, populated battleDeck:', JSON.stringify(updatedUser.battleDeck, null, 2));
+        res.json({ message: 'Pokémon removed from deck', deck: updatedUser.battleDeck });
+    } catch (error) {
+        console.error('Error removing Pokémon from deck:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -163,67 +147,4 @@ const generateToken = (id) => {
     });
 };
 
-module.exports = (io) => {
-    // Get user's battle deck
-    router.get('/deck', auth, async (req, res) => {
-        try {
-            const user = await User.findById(req.user.id).populate('battleDeck');
-            if (!user) {
-                return res.status(404).json({ message: 'User not found' });
-            }
-            res.json(user.battleDeck);
-        } catch (error) {
-            console.error('Error fetching deck:', error);
-            res.status(500).json({ message: error.message });
-        }
-    });
-
-    // Add a Pokémon to the user's deck
-    router.post('/deck', auth, async (req, res) => {
-        try {
-            const { pokemonNumber } = req.body;
-            const user = await User.findById(req.user.id);
-
-            if (user.battleDeck.some(pokemon => pokemon.number === pokemonNumber)) {
-                return res.status(400).json({ message: 'Pokémon is already in the deck' });
-            }
-
-            if (user.battleDeck.length >= 7) {
-                return res.status(400).json({ message: 'Deck cannot exceed 7 Pokémon' });
-            }
-
-            const pokemon = await Pokemon.findOne({ number: pokemonNumber });
-            if (!pokemon) {
-                return res.status(404).json({ message: 'Pokémon not found' });
-            }
-
-            user.battleDeck.push(pokemon);
-            await user.save();
-
-            io.emit('deckUpdated', user.battleDeck); // Emit event
-
-            res.json(user.battleDeck);
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
-    });
-
-    // Remove Pokemon from deck
-    router.delete('/deck/:pokemonNumber', auth, async (req, res) => {
-        try {
-            const user = await User.findById(req.user.id);
-            user.battleDeck = user.battleDeck.filter(
-                pokemon => pokemon.number !== req.params.pokemonNumber
-            );
-            await user.save();
-
-            io.emit('deckUpdated', user.battleDeck); // Emit event
-
-            res.json({ message: 'Pokemon removed from deck', deck: user.battleDeck });
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
-    });
-
-    return router;
-};
+module.exports = router;

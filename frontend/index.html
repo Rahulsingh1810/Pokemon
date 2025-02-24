@@ -13,9 +13,9 @@
             
             if (!token || !user) {
                 window.location.href = 'login.html';
+                return;
             }
             
-            // Optional: Check token expiration
             try {
                 const userData = JSON.parse(user);
                 if (!userData._id || !userData.email) {
@@ -38,7 +38,6 @@
             <div class="bar"></div>
         </div>
         <div class="menu-container" id="menu-container">
-            
             <input type="text" id="search" placeholder="Search by name or number">
             <select id="filter">
                 <option value="">Filter by type</option>
@@ -96,36 +95,34 @@
     </header>
     <main id="pokemon-container"></main>
     
-    <!-- Ensure this modal structure is present -->
-    <!-- Move deck modal outside footer -->
-<div id="deckModal" class="modal">
-    <div class="modal-content">
-        <span class="close-button">&times;</span>
-        <h2>Battle Deck</h2>
-        <div id="deckList" class="deck-list"></div>
-    </div>
-</div>
-
-<footer>
-    <!-- ... existing footer content ... -->
-    <div class="pagination">
-        <button id="prev">Previous</button>
-        <button id="next">Next</button>
-    </div>
-    
-    <!-- Deck Container inside the footer -->
-    <div class="deck-container" id="showDeck">
-        <img src="assets/pokeball.png" alt="Battle Deck" class="pokeball-icon">
-        <span id="deckCount">0/7</span>
-    </div>
-</footer>
-
+    <!-- Pokémon Modal -->
     <div id="pokemon-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
+            <span class="close-button">×</span>
             <div id="pokemon-details"></div>
         </div>
     </div>
+
+    <!-- Deck Modal -->
+    <div id="deckModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <h2>Battle Deck</h2>
+            <p id="deckCount">0/7</p>
+            <div id="deckList" class="deck-list"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="pagination">
+            <button id="prev">Previous</button>
+            <button id="next">Next</button>
+        </div>
+        <div class="deck-container" id="showDeck">
+            <img src="assets/pokeball.png" alt="Battle Deck" class="pokeball-icon">
+            <span id="deckCount">0/7</span>
+        </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>
