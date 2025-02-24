@@ -1,46 +1,8 @@
 // filepath: /Users/avaamo/Documents/GitHub/Pokemon/backend/models/userModel.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const pokemonSchema = require('./pokemonModel');
 
-// Define a Pokemon schema for the battle deck
-const pokemonSchema = new mongoose.Schema({
-    number: {
-        type: String,
-        required: true
-    },
-    name: {
-        type: String,
-        required: true
-    },
-    ThumbnailImage: {
-        type: String,
-        required: true
-    },
-    ThumbnailAltText: {
-        type: String,
-        required: true
-    },
-    type: {
-        type: [String],
-        required: true
-    },
-    weakness: {
-        type: [String],
-        required: true
-    },
-    height: {
-        type: String,
-        required: true
-    },
-    weight: {
-        type: String,
-        required: true
-    },
-    abilities: {
-        type: [String],
-        required: true
-    }
-});
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -61,7 +23,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    battleDeck: [pokemonSchema]  // Using the defined Pokemon schema
+    battleDeck: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Pokemon'
+    }]
 }, {
     timestamps: true
 });

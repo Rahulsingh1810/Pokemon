@@ -17,6 +17,13 @@ const itemsPerPage = 15;
 let pokemonData = [];
 let isRandomized = false;
 
+const socket = io('http://localhost:8080'); // Connect to the same port
+
+socket.on('deckUpdated', (updatedDeck) => {
+    battleDeck = updatedDeck;
+    updateDeckDisplay();
+});
+
 // ✅ Fetch Pokémon Data
 async function getData() {
     try {

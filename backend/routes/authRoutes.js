@@ -77,7 +77,7 @@ router.get('/deck', auth, async (req, res) => {
         }
         res.json(user.battleDeck);
     } catch (error) {
-        console.error('Error fetching deck:', error); // Log the error for debugging
+        console.error('Error fetching deck:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -134,17 +134,14 @@ router.post('/deck', auth, async (req, res) => {
         const { pokemonNumber } = req.body;
         const user = await User.findById(req.user.id);
 
-        // Check if the Pokémon is already in the deck
         if (user.battleDeck.some(pokemon => pokemon.number === pokemonNumber)) {
             return res.status(400).json({ message: 'Pokémon is already in the deck' });
         }
 
-        // Check if the deck is full
         if (user.battleDeck.length >= 7) {
             return res.status(400).json({ message: 'Deck cannot exceed 7 Pokémon' });
         }
 
-        // Add the Pokémon to the deck
         const pokemon = await Pokemon.findOne({ number: pokemonNumber });
         if (!pokemon) {
             return res.status(404).json({ message: 'Pokémon not found' });
@@ -166,4 +163,67 @@ const generateToken = (id) => {
     });
 };
 
-module.exports = router;
+module.exports = (io) => {
+    // Get user's battle deck
+    router.get('/deck', auth, async (req, res) => {
+        try {
+            const user = await User.findById(req.user.id).populate('battleDeck');
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            res.json(user.battleDeck);
+        } catch (error) {
+            console.error('Error fetching deck:', error);
+            res.status(500).json({ message: error.message });
+        }
+    });
+
+    // Add a Pokémon to the user's deck
+    router.post('/deck', auth, async (req, res) => {
+        try {
+            const { pokemonNumber } = req.body;
+            const user = await User.findById(req.user.id);
+
+            if (user.battleDeck.some(pokemon => pokemon.number === pokemonNumber)) {
+                return res.status(400).json({ message: 'Pokémon is already in the deck' });
+            }
+
+            if (user.battleDeck.length >= 7) {
+                return res.status(400).json({ message: 'Deck cannot exceed 7 Pokémon' });
+            }
+
+            const pokemon = await Pokemon.findOne({ number: pokemonNumber });
+            if (!pokemon) {
+                return res.status(404).json({ message: 'Pokémon not found' });
+            }
+
+            user.battleDeck.push(pokemon);
+            await user.save();
+
+            io.emit('deckUpdated', user.battleDeck); // Emit event
+
+            res.json(user.battleDeck);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    });
+
+    // Remove Pokemon from deck
+    router.delete('/deck/:pokemonNumber', auth, async (req, res) => {
+        try {
+            const user = await User.findById(req.user.id);
+            user.battleDeck = user.battleDeck.filter(
+                pokemon => pokemon.number !== req.params.pokemonNumber
+            );
+            await user.save();
+
+            io.emit('deckUpdated', user.battleDeck); // Emit event
+
+            res.json({ message: 'Pokemon removed from deck', deck: user.battleDeck });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    });
+
+    return router;
+};
