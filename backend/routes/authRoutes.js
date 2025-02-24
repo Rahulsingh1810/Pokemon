@@ -109,7 +109,6 @@ router.put('/deck', auth, async (req, res) => {
 
         res.json(user.battleDeck);
     } catch (error) {
-        console.error('Error updating deck:', error);
         res.status(500).json({ message: error.message });
     }
 });

@@ -97,12 +97,14 @@
     <main id="pokemon-container"></main>
     
     <!-- Ensure this modal structure is present -->
-    <div id="pokemon-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <div id="pokemon-details"></div>
-        </div>
+    <!-- Move deck modal outside footer -->
+<div id="deckModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Battle Deck</h2>
+        <div id="deckList" class="deck-list"></div>
     </div>
+</div>
     
     
 
@@ -127,6 +129,13 @@
         <span id="deckCount">0/7</span>
     </div>
 </footer>
+
+    <div id="pokemon-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="pokemon-details"></div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
