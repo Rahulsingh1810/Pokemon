@@ -2,6 +2,7 @@
 
 * {
     font-family: 'Aladin', cursive;
+    box-sizing: border-box; /* Ensure padding doesn’t affect layout */
 }
 
 body {
@@ -17,11 +18,11 @@ body {
 }
 
 main {
-    flex: 1;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding-bottom: 80px;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+    padding-bottom: 80px; /* Space for footer */
+    width: 100%; /* Ensure full width */
 }
 
 .logo {
@@ -42,6 +43,7 @@ header {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
+    width: 100%; /* Full width */
 }
 
 header h1 {
@@ -85,27 +87,39 @@ header input:focus, header select:focus, header button:hover {
     display: flex;
     flex-direction: row;
     align-items: center;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    justify-content: center; /* Center items */
 }
 
 #pokemon-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: row; /* Single row by default for all screens */
+    justify-content: center; /* Center cards horizontally */
     padding: 20px;
-    gap: 20px;
+    gap: 15px; /* Reduced gap for better fit */
+    width: 100%; /* Full width */
+    max-width: 3400px; /* Fit up to 15 cards: 15 × (200px + 15px gap) ≈ 3300px */
+    overflow-x: auto; /* Horizontal scrolling if cards exceed width */
+    flex-wrap: nowrap; /* Prevent wrapping to enforce single row */
+    align-items: flex-start; /* Align cards to the top */
 }
 
 .pokemon-card {
-    background: rgba(255, 215, 0, 0.7); /* Increased opacity from 0.3 to 0.7 */
+    background: rgba(255, 215, 0, 0.7); /* 70% opacity */
     border: 1px solid rgba(255, 215, 0, 0.6);
     border-radius: 15px;
-    padding: 20px;
-    width: 200px;
+    padding: 15px; /* Reduced padding */
+    width: 200px; /* Fixed width */
+    height: 300px; /* Fixed height to prevent growth */
     text-align: center;
     color: black;
     box-shadow: 0px 4px 10px rgba(255, 215, 0, 0.5);
     transition: transform 0.3s ease-in-out;
-    backdrop-filter: blur(12px); /* Maintain blur effect */
+    backdrop-filter: blur(12px);
+    flex-shrink: 0; /* Prevent cards from shrinking */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distribute content vertically */
 }
 
 .pokemon-card:hover {
@@ -115,6 +129,14 @@ header input:focus, header select:focus, header button:hover {
 .pokemon-card img {
     width: 100px;
     height: 100px;
+    object-fit: contain; /* Ensure images fit without distortion */
+}
+
+.pokemon-card h3, .pokemon-card p {
+    margin: 5px 0; /* Reduce margin for better fit */
+    overflow: hidden; /* Prevent text overflow */
+    text-overflow: ellipsis; /* Truncate long text with dots */
+    white-space: nowrap; /* Prevent text wrapping */
 }
 
 footer {
@@ -130,6 +152,12 @@ footer {
     align-items: center;
 }
 
+.pagination {
+    display: flex;
+    gap: 10px;
+    margin-left: 10px;
+}
+
 .pagination button {
     padding: 8px 12px;
     border: none;
@@ -137,6 +165,7 @@ footer {
     background-color: #ff5350;
     color: white;
     cursor: pointer;
+    font-size: 14px;
 }
 
 .deck-container {
@@ -202,14 +231,14 @@ footer {
 }
 
 .modal-content {
-    background: rgba(255, 215, 0, 0.7); /* Increased opacity from 0.3 to 0.7 */
+    background: rgba(255, 215, 0, 0.7); /* 70% opacity */
     padding: 25px;
     border-radius: 15px;
     max-width: 500px;
     max-height: 85vh;
     overflow-y: auto;
     color: black;
-    backdrop-filter: blur(12px); /* Maintain blur effect */
+    backdrop-filter: blur(12px);
 }
 
 .close-button {
@@ -224,6 +253,8 @@ footer {
 }
 
 /* Media Queries */
+
+/* Mobile Screens (≤768px) */
 @media (max-width: 768px) {
     .hamburger-menu {
         display: flex;
@@ -239,5 +270,22 @@ footer {
     }
     .menu-container.show {
         display: flex;
+    }
+    #pokemon-container {
+        flex-direction: column; /* Stack cards vertically on mobile */
+        align-items: center; /* Center cards horizontally */
+        overflow-x: visible; /* Remove horizontal scrolling */
+        overflow-y: auto; /* Vertical scrolling if needed */
+        max-height: calc(100vh - 160px); /* Limit height to viewport minus header/footer */
+    }
+    .pokemon-card {
+        width: 80%; /* Adjust width for mobile */
+        max-width: 200px; /* Maintain max width */
+        height: 300px; /* Fixed height */
+        padding: 10px; /* Reduced padding for mobile */
+    }
+    header input, header select, header button {
+        width: 90%; /* Full width on mobile */
+        margin: 5px 0; /* Stack vertically */
     }
 }
