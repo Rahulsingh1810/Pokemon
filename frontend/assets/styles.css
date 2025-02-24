@@ -101,14 +101,15 @@ header input:focus, header select:focus, header button:hover {
     max-width: 3400px; /* Fit up to 15 cards: 15 × (200px + 15px gap) ≈ 3300px */
     overflow-x: auto; /* Horizontal scrolling if cards exceed width */
     flex-wrap: nowrap; /* Prevent wrapping to enforce single row */
-    align-items: flex-start; /* Align cards to the top */
+    align-items: flex-start; 
+    padding-bottom: 90px;/* Align cards to the top */
 }
 
 .pokemon-card {
     background: rgba(255, 215, 0, 0.7); /* 70% opacity */
     border: 1px solid rgba(255, 215, 0, 0.6);
     border-radius: 15px;
-    padding: 15px; /* Reduced padding */
+    padding: 50px; /* Reduced padding */
     width: 200px; /* Fixed width */
     height: 300px; /* Fixed height to prevent growth */
     text-align: center;
@@ -284,8 +285,32 @@ footer {
         height: 300px; /* Fixed height */
         padding: 10px; /* Reduced padding for mobile */
     }
-    header input, header select, header button {
-        width: 90%; /* Full width on mobile */
-        margin: 5px 0; /* Stack vertically */
+}
+
+/* Tablet (iPad) Screens: Between 769px and 1024px */
+@media (min-width: 769px) and (max-width: 1024px) {
+    #pokemon-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 3 columns */
+        grid-auto-rows: 300px; /* Fixed row height matching card height */
+        gap: 15px;
+        justify-items: center;
+        padding: 20px;
+        overflow: visible;
+        max-width: 100%;
+    }
+}
+
+/* Laptop and larger screens (≥1025px) */
+@media (min-width: 1025px) {
+    #pokemon-container {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr); /* 5 columns */
+        grid-auto-rows: 300px; /* Fixed row height matching card height */
+        gap: 15px;
+        justify-items: center;
+        padding: 20px;
+        overflow: visible;
+        max-width: 100%;
     }
 }
