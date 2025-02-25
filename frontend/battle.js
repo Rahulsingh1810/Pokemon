@@ -55,6 +55,8 @@ function handleCardClick(userCardIndex) {
         updateScores(1, 0);
     } else if (result < 0) {
         updateScores(0, 1);
+    } else {
+        updateScores(1, 1); // Both get a point in case of a tie
     }
 
     userDeck.splice(userCardIndex, 1);
@@ -98,9 +100,26 @@ function compareCards(userCard, opponentCard) {
     let opponentPoints = 0;
     let comparisonDetails = '';
 
+    console.log('User Card:', userCard);
+    console.log('Opponent Card:', opponentCard);
+
     // Compare type weaknesses
-   
-   
+    userCard.type.forEach(type => {
+        console.log(`Checking if opponent's weaknesses include user's type: ${type}`);
+        if (opponentCard.weakness.includes(type)) {
+            userPoints++;
+            comparisonDetails += `<p>User's ${type} type is strong against opponent's weakness.</p>`;
+            console.log(`User's ${type} type is strong against opponent's weakness.`);
+        }
+    });
+    opponentCard.type.forEach(type => {
+        console.log(`Checking if user's weaknesses include opponent's type: ${type}`);
+        if (userCard.weakness.includes(type)) {
+            opponentPoints++;
+            comparisonDetails += `<p>Opponent's ${type} type is strong against user's weakness.</p>`;
+            console.log(`Opponent's ${type} type is strong against user's weakness.`);
+        }
+    });
 
     // Compare height
     if (userCard.height > opponentCard.height) {
