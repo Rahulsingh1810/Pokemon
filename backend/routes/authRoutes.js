@@ -7,8 +7,16 @@ const auth = require('../middleware/auth');
 const Pokemon = require('../models/pokemonModel');
 
 // Register route
+
+
 router.post('/register', async (req, res) => {
     const { username, email, password, confirmPassword, profilePicture } = req.body;
+
+    // Strong password validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+        return res.status(400).json({ message: 'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.' });
+    }
 
     if (password !== confirmPassword) {
         return res.status(400).json({ message: 'Passwords do not match' });
@@ -38,6 +46,7 @@ router.post('/register', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
 
 // Login route
 router.post('/login', async (req, res) => {
