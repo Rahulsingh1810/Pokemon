@@ -4,18 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Battle Page</title>
-    <link rel="stylesheet" href="assets/battle.css"> <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="assets/battle.css">
 </head>
 <body>
-    <div class="scoreboard">
-        <div class="score">
-            <h3>User Score: <span id="userScore">0</span></h3>
-        </div>
-        <div class="score">
-            <h3>Opponent Score: <span id="opponentScore">0</span></h3>
-        </div>
-    </div>
-
     <div class="sidebar left-sidebar">
         <h2>User Deck</h2>
         <div class="deck-list" id="userDeck">
@@ -30,8 +21,13 @@
         </div>
     </div>
 
-    <!-- Main content of the page -->
     <div class="main-content">
+        <div class="scoreboard">
+            <div class="score">
+                <p>User: <span id="userScore">0</span></p>
+                <p>Opponent: <span id="opponentScore">0</span></p>
+            </div>
+        </div>
         <div id="battleArea" class="battle-area">
             <div id="userCardDisplay" class="card-display"></div>
             <div id="opponentCardDisplay" class="card-display"></div>
@@ -39,6 +35,6 @@
         </div>
     </div>
 
-    <script src="battle.js"></script> <!-- Ensure this is linked correctly -->
+    <script src="battle.js"></script>
 </body>
 </html>

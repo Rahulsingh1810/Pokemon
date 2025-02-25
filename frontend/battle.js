@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Document loaded');
+    
     populateDecks();
 });
 
@@ -10,8 +10,7 @@ function populateDecks() {
     const userDeck = JSON.parse(localStorage.getItem('userDeck')) || [];
     const opponentDeck = JSON.parse(localStorage.getItem('opponentDeck')) || [];
 
-    console.log('User Deck:', userDeck);
-    console.log('Opponent Deck:', opponentDeck);
+   
 
     userDeckElement.innerHTML = '';
     opponentDeckElement.innerHTML = '';
@@ -66,6 +65,9 @@ function handleCardClick(userCardIndex) {
     localStorage.setItem('opponentDeck', JSON.stringify(opponentDeck));
 
     populateDecks();
+
+    // Check if the battle is complete
+    checkBattleCompletion();
 }
 
 function animateCards(userCard, opponentCard) {
@@ -156,5 +158,61 @@ function updateScores(userIncrement, opponentIncrement) {
     opponentScoreElement.textContent = opponentScore;
 }
 
-// Example usage
-updateScores(0, 0); // Update scores as needed
+function checkBattleCompletion() {
+    const userDeck = JSON.parse(localStorage.getItem('userDeck')) || [];
+    const opponentDeck = JSON.parse(localStorage.getItem('opponentDeck')) || [];
+
+    if (userDeck.length === 0 || opponentDeck.length === 0) {
+        handleBattleCompletion();
+    }
+}
+
+function handleBattleCompletion() {
+    const userScore = parseInt(document.getElementById('userScore').textContent);
+    const opponentScore = parseInt(document.getElementById('opponentScore').textContent);
+
+    let message = '';
+    if (userScore > opponentScore) {
+        message = 'Congratulations! You won the battle!';
+    } else if (userScore < opponentScore) {
+        message = 'The opponent won the battle. Better luck next time!';
+    } else {
+        message = 'It\'s a tie!';
+    }
+
+    alert(message);
+
+    // Store the score in the database
+    storeScoreInDatabase(userScore, opponentScore);
+}
+
+function storeScoreInDatabase(userScore, opponentScore) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('You must be logged in to save the battle result.');
+        return;
+    }
+
+    const userId = localStorage.getItem('userId'); // Assuming userId is stored in localStorage
+    const opponentId = 'opponent-id'; // Replace with actual opponent ID if available
+
+    fetch('http://localhost:8080/api/auth/save-battle', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            userId,
+            opponentId,
+            score: { user: userScore, opponent: opponentScore }
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Battle result saved:', data);
+    })
+    .catch(error => {
+        console.error('Error saving battle result:', error);
+    });
+}

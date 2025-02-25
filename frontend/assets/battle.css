@@ -1,30 +1,33 @@
 body {
-    background-image: url('../assets/battlearena.webp'); /* Adjust the path as necessary */
-    background-size: cover; /* Ensures the image covers the entire page */
-    background-position: center; /* Centers the image */
-    background-repeat: no-repeat; /* Prevents the image from repeating */
-    background-attachment: fixed; /* Keeps the background fixed during scrolling */
     margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif; /* Example font */
-    color: #fff; /* Example text color */
+    font-family: Arial, sans-serif;
+    background-image: url('./battlearena.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-color: #f0f0f0;
 }
 
 .scoreboard {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
     padding: 10px;
-    color: #fff;
-    font-size: 18px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.score {
-    margin: 0 20px;
+    color: #000;
+    font-size: 14px;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding-top: 50px;
 }
 
 .sidebar {
@@ -61,6 +64,23 @@ body {
     height: 100vh;
 }
 
+.battle-area {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+}
+
 .deck-list {
     display: grid;
     gap: 15px;
@@ -80,32 +100,18 @@ body {
     transform: scale(1.05);
 }
 
-.battle-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 600px;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 20px;
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
+/* Media query for iPads */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 200px; /* Adjusted width for iPads */
+    }
 
-.card-display {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-    margin-bottom: 20px;
-    transition: transform 0.5s ease;
-}
+    .main-content {
+        margin-left: 220px;
+        margin-right: 220px;
+    }
 
-.comparison-result {
-    text-align: center;
-    color: #fff;
-    font-size: 18px;
-    margin-top: 10px;
+    .deck-list {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Adjusted card size */
+    }
 }
