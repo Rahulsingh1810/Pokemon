@@ -1,0 +1,28 @@
+.battle-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 20px;
+}
+
+.deck-sidebar {
+    width: 25%;
+    background: rgba(255, 215, 0, 0.7);
+    border-radius: 15px;
+    padding: 10px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.battle-arena {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.battle-arena .pokemon-card {
+    width: 100%;
+    max-width: 300px;
+}

@@ -140,6 +140,26 @@ router.delete('/deck/:pokemonNumber', auth, async (req, res) => {
     }
 });
 
+
+// Add new route
+router.post('/save-battle', auth, async (req, res) => {
+    const { userId, opponentId, score } = req.body;
+  
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      user.battleHistory.push({ opponentId, score });
+      await user.save();
+      res.json({ message: 'Battle result saved' });
+    } catch (error) {
+      console.error('Error saving battle result:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
 // Generate JWT token
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {

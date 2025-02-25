@@ -2,30 +2,19 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true,
-        unique: false
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    profilePicture: {
-        type: String,
-        default: ''
-    },
-    battleDeck: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Pokemon'
-    }]
-}, {
-    timestamps: true
+    username: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    profilePicture: { type: String },
+    battleDeck: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pokemon' }],
+    battleHistory: [{
+      opponentId: { type: Number },
+      score: {
+        user: { type: Number },
+        opponent: { type: Number }
+      },
+      date: { type: Date, default: Date.now }
+    }],
 });
 
 // Hash password before saving

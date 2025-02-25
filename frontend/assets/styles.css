@@ -151,6 +151,22 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
+}
+
+#selectOpponentBtn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff5350;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+#selectOpponentBtn:hover {
+    background-color: #e03e3c;
 }
 
 .pagination {
@@ -242,6 +258,22 @@ footer {
     backdrop-filter: blur(12px);
 }
 
+#goToBattleBtn {
+    padding: 10px 20px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff5350;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+#goToBattleBtn:hover {
+    background-color: #e03e3c;
+}
+
 .close-button {
     position: absolute;
     top: 15px;
@@ -277,7 +309,8 @@ footer {
         align-items: center; /* Center cards horizontally */
         overflow-x: visible; /* Remove horizontal scrolling */
         overflow-y: auto; /* Vertical scrolling if needed */
-        max-height: calc(100vh - 160px); /* Limit height to viewport minus header/footer */
+        max-height: calc(100vh - 160px);
+        padding-top: 2400px; /* Limit height to viewport minus header/footer */
     }
     .pokemon-card {
         width: 80%; /* Adjust width for mobile */

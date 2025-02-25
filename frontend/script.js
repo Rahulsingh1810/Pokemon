@@ -391,3 +391,67 @@ function updateDeckDisplay() {
     deckCountFooter.textContent = `${deckSize}/7`;
     deckCountModal.textContent = `${deckSize}/7`;
 }
+
+
+// Add at the top
+let selectedBotId = null;
+
+// Add event listener for the new button
+document.getElementById('selectOpponentBtn').addEventListener('click', selectOpponent);
+
+// Function to fetch and select an opponent
+async function selectOpponent() {
+  try {
+    const response = await fetch('http://localhost:8080/api/bots');
+    if (!response.ok) throw new Error('Failed to fetch bots');
+    const bots = await response.json();
+
+    // Simple prompt for demo; replace with a modal/dropdown for better UX
+    const botList = bots.map((bot) => `${bot.id}: ${bot.name}`).join('\n');
+    const choice = prompt(`Select an opponent by ID:\n${botList}`);
+    const botId = parseInt(choice);
+
+    if (bots.some((bot) => bot.id === botId)) {
+      selectedBotId = botId;
+      alert(`Selected opponent: Bot ${botId}`);
+    } else {
+      alert('Invalid selection. Please try again.');
+    }
+  } catch (error) {
+    console.error('Error selecting opponent:', error);
+    alert('Failed to fetch opponents.');
+  }
+}
+
+
+// Add event listener in DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Existing code...
+
+    document.getElementById('goToBattleBtn').addEventListener('click', goToBattle);
+});
+
+// Function to start battle mode
+async function goToBattle() {
+  if (!selectedBotId) {
+    alert('Please select an opponent first.');
+    return;
+  }
+  if (battleDeck.length < 1) {
+    alert('Your deck is empty. Add Pokémon to battle!');
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:8080/api/bots/${selectedBotId}/deck`);
+    if (!response.ok) throw new Error('Failed to fetch opponent deck');
+    const opponentDeck = await response.json();
+
+    localStorage.setItem('userDeck', JSON.stringify(battleDeck));
+    localStorage.setItem('opponentDeck', JSON.stringify(opponentDeck));
+    window.location.href = 'battle.html';
+  } catch (error) {
+    console.error('Error starting battle:', error);
+    alert('Failed to start battle.');
+  }
+}
