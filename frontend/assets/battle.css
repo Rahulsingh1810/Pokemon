@@ -1,46 +1,111 @@
-.battle-container {
+body {
+    background-image: url('../assets/battlearena.webp'); /* Adjust the path as necessary */
+    background-size: cover; /* Ensures the image covers the entire page */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    background-attachment: fixed; /* Keeps the background fixed during scrolling */
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif; /* Example font */
+    color: #fff; /* Example text color */
+}
+
+.scoreboard {
     display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    gap: 20px;
-    flex-direction: column;
-}
-
-.deck-sidebar {
-    width: 100%;
-    background: rgba(255, 215, 0, 0.7);
-    border-radius: 15px;
+    justify-content: space-around;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 10px;
-    max-height: 40vh;
-    overflow-y: auto;
+    color: #fff;
+    font-size: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.battle-arena {
-    width: 100%;
+.score {
+    margin: 0 20px;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 250px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    overflow-y: auto;
+    color: #fff;
+}
+
+.left-sidebar {
+    left: 0;
+}
+
+.right-sidebar {
+    right: 0;
+}
+
+.main-content {
+    margin-left: 270px;
+    margin-right: 270px;
+    padding: 20px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.deck-list {
+    display: grid;
+    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+
+.deck-item {
+    background: rgba(255, 215, 255, 0.7);
+    border-radius: 10px;
+    padding: 10px;
+    position: relative;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.deck-item:hover {
+    transform: scale(1.05);
+}
+
+.battle-area {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
-    order: 2;
-}
-
-.battle-arena .pokemon-card {
+    justify-content: center;
     width: 100%;
-    max-width: 300px;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-@media (min-width: 768px) {
-    .battle-container {
-        flex-direction: row;
-    }
+.card-display {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: 20px;
+    transition: transform 0.5s ease;
+}
 
-    .deck-sidebar {
-        width: 25%;
-        max-height: 80vh;
-    }
-
-    .battle-arena {
-        width: 50%;
-        order: 1;
-    }
+.comparison-result {
+    text-align: center;
+    color: #fff;
+    font-size: 18px;
+    margin-top: 10px;
 }

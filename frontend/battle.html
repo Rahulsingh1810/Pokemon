@@ -3,24 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokémon Battle</title>
-    <link rel="stylesheet" href="assets/battle.css">
+    <title>Battle Page</title>
+    <link rel="stylesheet" href="assets/battle.css"> <!-- Link to your CSS file -->
 </head>
 <body>
-    <header>
-        <h1>Pokémon Battle</h1>
-    </header>
-    <main>
-        <div class="battle-container">
-            <div class="deck-sidebar" id="opponentDeck"></div>
-            <div class="battle-arena">
-                <div id="userCard"></div>
-                <div id="opponentCard"></div>
-                <p id="battleResult"></p>
-            </div>
-            <div class="deck-sidebar" id="userDeck"></div>
+    <div class="scoreboard">
+        <div class="score">
+            <h3>User Score: <span id="userScore">0</span></h3>
         </div>
-    </main>
-    <script src="battle.js"></script>
+        <div class="score">
+            <h3>Opponent Score: <span id="opponentScore">0</span></h3>
+        </div>
+    </div>
+
+    <div class="sidebar left-sidebar">
+        <h2>User Deck</h2>
+        <div class="deck-list" id="userDeck">
+            <!-- User deck cards will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <div class="sidebar right-sidebar">
+        <h2>Opponent Deck</h2>
+        <div class="deck-list" id="opponentDeck">
+            <!-- Opponent deck cards will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- Main content of the page -->
+    <div class="main-content">
+        <div id="battleArea" class="battle-area">
+            <div id="userCardDisplay" class="card-display"></div>
+            <div id="opponentCardDisplay" class="card-display"></div>
+            <div id="comparisonResult" class="comparison-result"></div>
+        </div>
+    </div>
+
+    <script src="battle.js"></script> <!-- Ensure this is linked correctly -->
 </body>
 </html>
