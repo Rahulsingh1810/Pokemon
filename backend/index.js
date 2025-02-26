@@ -28,7 +28,7 @@ function getRandomDeck() {
 
 // Create 5 bot users
 const bots = [];
-for (let i = 1; i <= 5; i++) {
+for (let i = 1; i <= 145; i++) {
   bots.push({
     id: i,
     name: `Bot ${i}`,

@@ -53,7 +53,7 @@ header h1 {
 }
 
 header input, header select, header button {
-    padding: 10px;
+    padding: 25px;
     margin: 5px;
     border: 2px solid #FFD700;
     border-radius: 25px;
@@ -102,8 +102,10 @@ header input:focus, header select:focus, header button:hover {
     overflow-x: auto; /* Horizontal scrolling if cards exceed width */
     flex-wrap: nowrap; /* Prevent wrapping to enforce single row */
     align-items: flex-start; 
+    color: black;
     padding-bottom: 90px;/* Align cards to the top */
 }
+
 
 .pokemon-card {
     background: rgba(255, 215, 0, 0.7); /* 70% opacity */
@@ -146,7 +148,7 @@ footer {
     width: 100%;
     background: rgba(229, 231, 235, 0.1);
     backdrop-filter: blur(10px);
-    padding: 10px;
+    padding: 15px;
     z-index: 100;
     display: flex;
     justify-content: space-between;

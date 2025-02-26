@@ -2,7 +2,10 @@ function showAlert(message) {
     const modal = document.getElementById('customAlert');
     const alertMessage = document.getElementById('alertMessage');
     alertMessage.textContent = message;
-    modal.style.display = 'flex'; // Use 'flex' for centering
+    modal.style.display = 'flex';
+    setTimeout(() => {
+        closeAlert();
+    }, 1750);
 }
 
 function closeAlert() {

@@ -406,7 +406,7 @@ async function selectOpponent() {
         if (!response.ok) throw new Error('Failed to fetch bots');
         const bots = await response.json();
 
-        showPrompt(`Select an opponent by ID:\n${bots.map(bot => `${bot.id}: ${bot.name}`).join('\n')}`, (choice) => {
+        showPrompt(`Select an opponent by ID 1-145`, (choice) => {
             const botId = parseInt(choice);
             if (bots.some(bot => bot.id === botId)) {
                 selectedBotId = botId;
@@ -425,6 +425,8 @@ async function selectOpponent() {
 async function goToBattle() {
     if (!selectedBotId) {
         showAlert('Please select an opponent first.');
+        selectOpponent();
+        
         return;
     }
     if (battleDeck.length !== 7) {

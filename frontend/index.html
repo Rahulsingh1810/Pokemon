@@ -114,19 +114,17 @@
         </div>
     </div>
 
-    <!-- Custom Alert Modal -->
     <div id="customAlert" class="modal">
         <div class="modal-content">
-            <span class="close-button" onclick="closeAlert()">×</span>
+            <span class="close-button" onclick="closeAlert()">&times;</span>
             <p id="alertMessage"></p>
             <button onclick="closeAlert()">OK</button>
         </div>
     </div>
 
-    <!-- Custom Prompt Modal -->
     <div id="customPrompt" class="modal">
         <div class="modal-content">
-            <span class="close-button" onclick="closePrompt()">×</span>
+            <span class="close-button" onclick="closePrompt()">&times;</span>
             <p id="promptMessage"></p>
             <input type="text" id="promptInput" placeholder="Enter your choice">
             <button onclick="submitPrompt()">Submit</button>
@@ -145,6 +143,7 @@
         <button id="selectOpponentBtn">Select Opponent</button>
     </footer>
 
+    
     <script src="utils.js"></script>
     <script src="script.js"></script>
 </body>
