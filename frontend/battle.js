@@ -102,26 +102,38 @@ function compareCards(userCard, opponentCard) {
     let opponentPoints = 0;
     let comparisonDetails = '';
 
-    console.log('User Card:', userCard);
-    console.log('Opponent Card:', opponentCard);
+    console.log('User Card:', JSON.stringify(userCard, null, 2));
+    console.log('Opponent Card:', JSON.stringify(opponentCard, null, 2));
 
-    // Compare type weaknesses
-    userCard.type.forEach(type => {
-        console.log(`Checking if opponent's weaknesses include user's type: ${type}`);
-        if (opponentCard.weakness.includes(type)) {
-            userPoints++;
-            comparisonDetails += `<p>User's ${type} type is strong against opponent's weakness.</p>`;
-            console.log(`User's ${type} type is strong against opponent's weakness.`);
-        }
-    });
-    opponentCard.type.forEach(type => {
-        console.log(`Checking if user's weaknesses include opponent's type: ${type}`);
-        if (userCard.weakness.includes(type)) {
-            opponentPoints++;
-            comparisonDetails += `<p>Opponent's ${type} type is strong against user's weakness.</p>`;
-            console.log(`Opponent's ${type} type is strong against user's weakness.`);
-        }
-    });
+    // Check if weakness property exists
+    if (!userCard.weakness || !opponentCard.weakness) {
+        console.error('Weakness property missing in one or both cards:', {
+            userCardWeakness: userCard.weakness,
+            opponentCardWeakness: opponentCard.weakness
+        });
+        comparisonDetails += '<p>Error: Weakness data missing!</p>';
+    } else {
+        // Compare type weaknesses (case-insensitive)
+        userCard.type.forEach(type => {
+            const normalizedType = type.toLowerCase();
+            console.log(`Checking if opponent's weaknesses include user's type: ${normalizedType}`);
+            if (opponentCard.weakness.map(w => w.toLowerCase()).includes(normalizedType)) {
+                userPoints++;
+                comparisonDetails += `<p>User's ${type} type is strong against opponent's weakness.</p>`;
+                console.log(`User's ${type} type is strong against opponent's weakness.`);
+            }
+        });
+
+        opponentCard.type.forEach(type => {
+            const normalizedType = type.toLowerCase();
+            console.log(`Checking if user's weaknesses include opponent's type: ${normalizedType}`);
+            if (userCard.weakness.map(w => w.toLowerCase()).includes(normalizedType)) {
+                opponentPoints++;
+                comparisonDetails += `<p>Opponent's ${type} type is strong against user's weakness.</p>`;
+                console.log(`Opponent's ${type} type is strong against user's weakness.`);
+            }
+        });
+    }
 
     // Compare height
     if (userCard.height > opponentCard.height) {

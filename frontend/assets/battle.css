@@ -103,7 +103,7 @@ body {
 /* Media query for iPads */
 @media (max-width: 1024px) {
     .sidebar {
-        width: 200px; /* Adjusted width for iPads */
+        width: 150px; /* Adjusted width for iPads */
     }
 
     .main-content {
@@ -113,5 +113,10 @@ body {
 
     .deck-list {
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Adjusted card size */
+    }
+
+    .battle-area {
+        max-width: 500px; /* Adjusted max-width for iPads */
+        padding: 15px; /* Adjusted padding for iPads */
     }
 }
