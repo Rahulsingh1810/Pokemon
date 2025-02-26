@@ -162,6 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     getData();
     fetchDeck();
+
+    document.getElementById('goToBattleBtn').addEventListener('click', goToBattle);
 });
 
 // Event Listeners
@@ -276,7 +278,7 @@ async function addToDeck(pokemonNumber) {
     }
 
     try {
-        console.log('Adding Pokémon with number:', pokemonNumber);
+       
         const response = await fetch('http://localhost:8080/api/auth/deck', {
             method: 'POST',
             headers: {
@@ -302,7 +304,7 @@ async function addToDeck(pokemonNumber) {
         }
 
         const updatedDeck = await response.json();
-        console.log('Updated deck:', updatedDeck);
+        
         battleDeck = updatedDeck;
         updateDeckDisplay();
         alert('Pokémon added to deck successfully!');
@@ -325,7 +327,7 @@ async function fetchDeck() {
         });
         if (!response.ok) throw new Error('Failed to fetch deck');
         const deck = await response.json();
-        console.log('Fetched deck:', deck);
+        
         battleDeck = deck;
         updateDeckDisplay();
     } catch (error) {
@@ -424,21 +426,14 @@ async function selectOpponent() {
 }
 
 
-// Add event listener in DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
-    // Existing code...
-
-    document.getElementById('goToBattleBtn').addEventListener('click', goToBattle);
-});
-
 // Function to start battle mode
 async function goToBattle() {
   if (!selectedBotId) {
     alert('Please select an opponent first.');
     return;
   }
-  if (battleDeck.length < 1) {
-    alert('Your deck is empty. Add Pokémon to battle!');
+  if (battleDeck.length !== 7) {
+    alert('Your deck must contain exactly 7 Pokémon to start the battle!');
     return;
   }
 

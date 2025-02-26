@@ -208,7 +208,7 @@ function storeScoreInDatabase(userScore, opponentScore) {
     const userId = localStorage.getItem('userId'); // Assuming userId is stored in localStorage
     const opponentId = 'opponent-id'; // Replace with actual opponent ID if available
 
-    fetch('http://localhost:8080/api/auth/save-battle', {
+    fetch('http://localhost:8080/api/save-battle', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
