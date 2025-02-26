@@ -137,6 +137,23 @@ body {
     cursor: pointer;
 }
 
+.return-home-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.return-home-button:hover {
+    background-color: #45a049;
+}
+
 /* Media query for iPads */
 @media (max-width: 1024px) {
     .sidebar {

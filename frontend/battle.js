@@ -4,6 +4,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (customAlert) customAlert.style.display = 'none';
     if (customPrompt) customPrompt.style.display = 'none';
     populateDecks();
+
+    // Add event listener for the return home button
+    document.getElementById('returnHomeBtn').addEventListener('click', () => {
+        window.location.href = 'index.html';
+    });
 });
 
 function populateDecks() {
