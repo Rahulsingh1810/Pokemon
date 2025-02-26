@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    
+    const customAlert = document.getElementById('customAlert');
+    const customPrompt = document.getElementById('customPrompt');
+    if (customAlert) customAlert.style.display = 'none';
+    if (customPrompt) customPrompt.style.display = 'none';
     populateDecks();
 });
 
@@ -9,8 +12,6 @@ function populateDecks() {
 
     const userDeck = JSON.parse(localStorage.getItem('userDeck')) || [];
     const opponentDeck = JSON.parse(localStorage.getItem('opponentDeck')) || [];
-
-   
 
     userDeckElement.innerHTML = '';
     opponentDeckElement.innerHTML = '';
@@ -192,7 +193,7 @@ function handleBattleCompletion() {
         message = 'It\'s a tie!';
     }
 
-    alert(message);
+    showAlert(message); // Use custom showAlert
 
     // Store the score in the database
     storeScoreInDatabase(userScore, opponentScore);
@@ -201,7 +202,7 @@ function handleBattleCompletion() {
 function storeScoreInDatabase(userScore, opponentScore) {
     const token = localStorage.getItem('token');
     if (!token) {
-        alert('You must be logged in to save the battle result.');
+        showAlert('You must be logged in to save the battle result.'); // Use custom showAlert
         return;
     }
 

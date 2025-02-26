@@ -35,6 +35,26 @@
         </div>
     </div>
 
+    <!-- Custom Alert Modal -->
+    <div id="customAlert" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeAlert()">×</span>
+            <p id="alertMessage"></p>
+            <button onclick="closeAlert()">OK</button>
+        </div>
+    </div>
+
+    <!-- Custom Prompt Modal -->
+    <div id="customPrompt" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closePrompt()">×</span>
+            <p id="promptMessage"></p>
+            <input type="text" id="promptInput" placeholder="Enter your choice">
+            <button onclick="submitPrompt()">Submit</button>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
     <script src="battle.js"></script>
 </body>
 </html>
