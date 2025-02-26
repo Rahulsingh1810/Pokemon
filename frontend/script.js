@@ -105,7 +105,7 @@ function displayPokemon() {
         card.innerHTML = `
             <img src="${pokemon.ThumbnailImage}" alt="${pokemon.ThumbnailAltText}">
             <h3>${pokemon.name}</h3>
-            <p>#${pokemon.number}</p>
+            <p>${pokemon.number}</p>
             <p>Type: ${pokemon.type.join(', ')}</p>
         `;
         card.addEventListener('click', () => openModal(pokemon));
@@ -411,6 +411,7 @@ async function selectOpponent() {
             if (bots.some(bot => bot.id === botId)) {
                 selectedBotId = botId;
                 showAlert(`Selected opponent: Bot ${botId}`);
+                goToBattle();
             } else {
                 showAlert('Invalid selection. Please try again.');
             }

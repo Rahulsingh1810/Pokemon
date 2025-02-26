@@ -13,7 +13,9 @@ const userSchema = new mongoose.Schema({
         user: { type: Number },
         opponent: { type: Number }
       },
-      date: { type: Date, default: Date.now }
+      date: { type: Date, default: Date.now },
+      resetPasswordToken: String,
+    resetPasswordExpire: Date
     }],
 });
 
