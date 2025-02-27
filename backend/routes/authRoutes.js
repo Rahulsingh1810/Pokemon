@@ -7,15 +7,22 @@ const auth = require('../middleware/auth');
 const Pokemon = require('../models/pokemonModel');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const sendgrid = require('@sendgrid/mail');
+
+
+
+sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
 
 const transporter = nodemailer.createTransport({
-    service: 'Gmail', // Use your email provider
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    secure: Number(process.env.SMTP_PORT) === 465,
     auth: {
-        user: process.env.EMAIL_USER, // Set in .env
-        pass: process.env.EMAIL_PASS  // Set in .env
-    }
-});
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
 
 // Register route
 
@@ -193,30 +200,37 @@ router.post('/forgot-password', async (req, res) => {
 
     try {
         const user = await User.findOne({ email });
+        console.log("user found", user);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-
+        
         // Generate reset token
         const resetToken = crypto.randomBytes(20).toString('hex');
+        
         const resetTokenExpire = Date.now() + 3600000; // Expires in 1 hour
 
         user.resetPasswordToken = resetToken;
+       
         user.resetPasswordExpire = resetTokenExpire;
+        
         await user.save();
 
-        // Send reset email
-        const resetUrl = `http://localhost:3000/reset-password.html?token=${resetToken}`;
-        await transporter.sendMail({
-            from: process.env.EMAIL_USER,
+        // Send reset email using SendGrid
+        const resetUrl = `http://127.0.0.1:5500/frontend/reset-password.html?token=${resetToken}`;
+        const msg = {
             to: user.email,
+            from: process.env.SENDGRID_FROM_EMAIL, // Verified sender email
             subject: 'Password Reset Request - Pokémon',
             text: `You requested a password reset. Click this link to reset your password: ${resetUrl}\n\nIf you did not request this, please ignore this email.`
-        });
+        };
 
+        await sendgrid.send(msg);
+       
         res.json({ message: 'Password reset link sent' });
     } catch (error) {
         console.error('Error in forgot password:', error);
+       
         res.status(500).json({ message: 'Error sending reset link' });
     }
 });

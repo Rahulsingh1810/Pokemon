@@ -8,15 +8,15 @@ const userSchema = new mongoose.Schema({
     profilePicture: { type: String },
     battleDeck: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pokemon' }],
     battleHistory: [{
-      opponentId: { type: Number },
-      score: {
-        user: { type: Number },
-        opponent: { type: Number }
-      },
-      date: { type: Date, default: Date.now },
-      resetPasswordToken: String,
-    resetPasswordExpire: Date
+        opponentId: { type: Number },
+        score: {
+            user: { type: Number },
+            opponent: { type: Number }
+        },
+        date: { type: Date, default: Date.now }
     }],
+    resetPasswordToken: { type: String },
+    resetPasswordExpire: { type: Date }
 });
 
 // Hash password before saving
